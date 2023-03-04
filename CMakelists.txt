@@ -39,8 +39,6 @@ target_include_directories(graph PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-# add_library(scnni SHARED blob tensor layer layer_factory graph)
-
 
 # 单元测试
 add_subdirectory(test)
