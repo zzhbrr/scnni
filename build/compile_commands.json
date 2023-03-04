@@ -23,5 +23,10 @@
   "directory": "/ws/CourseProject/SCNNI/build",
   "command": "/usr/bin/clang++ -Dblob_EXPORTS -I/ws/CourseProject/SCNNI/include -g -fPIC -std=gnu++17 -o CMakeFiles/blob.dir/src/blob.cpp.o -c /ws/CourseProject/SCNNI/src/blob.cpp",
   "file": "/ws/CourseProject/SCNNI/src/blob.cpp"
+},
+{
+  "directory": "/ws/CourseProject/SCNNI/build/test",
+  "command": "/usr/bin/clang++   -g -std=gnu++17 -o CMakeFiles/test_layer.dir/test_layer.cpp.o -c /ws/CourseProject/SCNNI/test/test_layer.cpp",
+  "file": "/ws/CourseProject/SCNNI/test/test_layer.cpp"
 }
 ]

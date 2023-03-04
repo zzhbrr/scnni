@@ -28,6 +28,9 @@ class Layer {
     virtual auto Forward(const std::vector<std::shared_ptr<Tensor<float>>>& input_blobs, std::shared_ptr<std::vector<std::shared_ptr<Tensor<float>>>> output_blobs) const -> int; 
     virtual auto Forward(const std::shared_ptr<Tensor<float>>& input_blobs, std::shared_ptr<Tensor<float>> output_blobs) const ->int;
 
+    virtual auto LoadModel() -> int;
+    virtual auto LoadParams() -> int;
+
     auto LayerName() const -> const std::string & { return this->layer_name_; }
 
   protected:

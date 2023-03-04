@@ -176,3 +176,31 @@ Parsed CXX implicit link information from above output:
   implicit fwks: []
 
 
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_4a9f6/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_4a9f6.dir/build.make CMakeFiles/cmTC_4a9f6.dir/build
+gmake[1]: Entering directory '/ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_4a9f6.dir/CheckIncludeFile.cxx.o
+/usr/bin/clang++    -o CMakeFiles/cmTC_4a9f6.dir/CheckIncludeFile.cxx.o -c /ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+Linking CXX executable cmTC_4a9f6
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4a9f6.dir/link.txt --verbose=1
+/usr/bin/clang++ CMakeFiles/cmTC_4a9f6.dir/CheckIncludeFile.cxx.o -o cmTC_4a9f6 
+gmake[1]: Leaving directory '/ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_628f6/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_628f6.dir/build.make CMakeFiles/cmTC_628f6.dir/build
+gmake[1]: Entering directory '/ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_628f6.dir/CheckFunctionExists.cxx.o
+/usr/bin/clang++   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_628f6.dir/CheckFunctionExists.cxx.o -c /ws/CourseProject/SCNNI/build/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_628f6
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_628f6.dir/link.txt --verbose=1
+/usr/bin/clang++  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_628f6.dir/CheckFunctionExists.cxx.o -o cmTC_628f6  -lpthread 
+gmake[1]: Leaving directory '/ws/CourseProject/SCNNI/build/CMakeFiles/CMakeTmp'
+
+
+

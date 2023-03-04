@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 08:53:12
- * @LastEditTime: 2023-03-04 09:37:25
+ * @LastEditTime: 2023-03-04 12:23:42
  * @Description: 
  * @FilePath: /SCNNI/include/layer_factory.hpp
  */
@@ -30,8 +30,22 @@ class LayerRegister {
      * @description: 创建Layer
      * @return {*}
      */
-    static auto CreateLayer() -> std::shared_ptr<Layer*>;
-}
+    static auto CreateLayer(const std::string &layer_type) -> std::shared_ptr<Layer>;
+
+    /**
+     * @description: 注册Layer到Registry中
+     * @return {*}
+     */
+    static void RegistLayer(const std::string &layer_type, const layer_creator_func &creator); 
+};
+
+class LayerRegistelrWrapper{
+  public:
+    LayerRegistelrWrapper(const std::string &layer_type, const LayerRegister::layer_creator_func &creator) {
+      LayerRegister::RegistLayer(layer_type, creator);
+    }
+};
+
 } // namespace scnni
 
 #endif

@@ -40,3 +40,7 @@ target_include_directories(graph PUBLIC
 )
 
 # add_library(scnni SHARED blob tensor layer layer_factory graph)
+
+
+# 单元测试
+add_subdirectory(test)

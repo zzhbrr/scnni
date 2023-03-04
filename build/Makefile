@@ -194,6 +194,19 @@ blob/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/blob.dir/build.make CMakeFiles/blob.dir/build
 .PHONY : blob/fast
 
+#=============================================================================
+# Target rules for targets named test_layer
+
+# Build rule for target.
+test_layer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_layer
+.PHONY : test_layer
+
+# fast build rule for target.
+test_layer/fast:
+	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_layer.dir/build.make test/CMakeFiles/test_layer.dir/build
+.PHONY : test_layer/fast
+
 src/blob.o: src/blob.cpp.o
 
 .PHONY : src/blob.o
@@ -342,6 +355,7 @@ help:
 	@echo "... layer"
 	@echo "... layer_factory"
 	@echo "... tensor"
+	@echo "... test_layer"
 	@echo "... src/blob.o"
 	@echo "... src/blob.i"
 	@echo "... src/blob.s"

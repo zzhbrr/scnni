@@ -5,3 +5,6 @@
 /ws/CourseProject/SCNNI/build/CMakeFiles/tensor.dir
 /ws/CourseProject/SCNNI/build/CMakeFiles/rebuild_cache.dir
 /ws/CourseProject/SCNNI/build/CMakeFiles/blob.dir
+/ws/CourseProject/SCNNI/build/test/CMakeFiles/rebuild_cache.dir
+/ws/CourseProject/SCNNI/build/test/CMakeFiles/edit_cache.dir
+/ws/CourseProject/SCNNI/build/test/CMakeFiles/test_layer.dir
