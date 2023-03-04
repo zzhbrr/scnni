@@ -1,0 +1,95 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.7"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "SCNNI",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "blob::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-blob-Debug-c292bab95c6dc59ca604.json",
+					"name" : "blob",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "graph::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-graph-Debug-6ea6bb122871dadb0b3c.json",
+					"name" : "graph",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "layer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-layer-Debug-195f15edcee86b875c22.json",
+					"name" : "layer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "layer_factory::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-layer_factory-Debug-4f4b52b00b94e0cbb5dc.json",
+					"name" : "layer_factory",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tensor::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tensor-Debug-ac8f37081246dfcd5587.json",
+					"name" : "tensor",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/ws/CourseProject/SCNNI/build",
+		"source" : "/ws/CourseProject/SCNNI"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 1
+	}
+}

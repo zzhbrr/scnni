@@ -1,0 +1,1 @@
+/usr/bin/clang++ -fPIC -g -shared -Wl,-soname,liblayer_factory.so -o liblayer_factory.so CMakeFiles/layer_factory.dir/src/layer_factory.cpp.o 

@@ -1,0 +1,4 @@
+find_package(GTest REQUIRED)
+
+set(link_lib GTest::gtest)
+add_executable(tensor_test test_tensor.cpp)

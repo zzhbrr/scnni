@@ -1,0 +1,7 @@
+/ws/CourseProject/SCNNI/build/CMakeFiles/edit_cache.dir
+/ws/CourseProject/SCNNI/build/CMakeFiles/graph.dir
+/ws/CourseProject/SCNNI/build/CMakeFiles/layer_factory.dir
+/ws/CourseProject/SCNNI/build/CMakeFiles/layer.dir
+/ws/CourseProject/SCNNI/build/CMakeFiles/tensor.dir
+/ws/CourseProject/SCNNI/build/CMakeFiles/rebuild_cache.dir
+/ws/CourseProject/SCNNI/build/CMakeFiles/blob.dir
