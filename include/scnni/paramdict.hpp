@@ -7,13 +7,13 @@
  */
 #ifndef SCNNI_PARAMDICT_HPP_
 #define SCNNI_PARAMDICT_HPP_
-#include "graph.hpp"
+#include "scnni/graph.hpp"
 #include <sstream>
 namespace scnni {
 class ParamDict {
   public:
     explicit ParamDict(std::stringstream &line_stream);
-    enum class ParamType {Int, Float, String, Bool, IntArray, StringArray, FloatArray};
+    enum class ParamType {Unkown, Int, Float, String, Bool, IntArray, StringArray, FloatArray};
     template<typename T> 
     auto Get(int id, const T &ret_default) -> T;
 

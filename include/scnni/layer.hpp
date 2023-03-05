@@ -1,21 +1,20 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-05 09:17:19
+ * @LastEditTime: 2023-03-05 15:51:45
  * @Description: 
- * @FilePath: /SCNNI/include/layer.hpp
+ * @FilePath: /SCNNI/include/scnni/layer.hpp
  */
 
 #ifndef SCNNI_LAYER_HPP_
 #define SCNNI_LAYER_HPP_ 
 #include "tensor.hpp"
-#include "blob.hpp"
 #include <memory>
 #include <string>
 #include <vector>
 
 namespace scnni {
-
+class Blob;
 class Layer {
   public:
     explicit Layer(std::string layer_name): layer_name_(std::move(layer_name)) {};
