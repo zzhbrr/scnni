@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-05 09:44:05
+ * @LastEditTime: 2023-03-05 14:38:37
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -81,7 +81,7 @@ auto Graph::LoadParam(const std::string &path) -> int {
             layer->outputs_.resize(output_blobs_count);
 
             // read input blobs
-            for (size_t i = 0; i < input_blobs_count; i ++) {
+            for (int i = 0; i < input_blobs_count; i ++) {
                 int blob_id;
                 line_stream >> blob_id;
                 SCNNI_ASSERT(blob_id >= 0 && blob_id < blob_count, "LoadModel: Wrong file: blob_id error");
@@ -91,7 +91,7 @@ auto Graph::LoadParam(const std::string &path) -> int {
             }
 
             // read output blobs
-            for (size_t i = 0; i < output_blobs_count; i ++) {
+            for (int i = 0; i < output_blobs_count; i ++) {
                 int blob_id;
                 line_stream >> blob_id;
                 SCNNI_ASSERT(blob_id >= 0 && blob_id < blob_count, "LoadModel: Wrong file: blob_id error");
