@@ -1,1 +1,0 @@
-/usr/bin/clang++ -fPIC -g -shared -Wl,-soname,libblob.so -o libblob.so CMakeFiles/blob.dir/src/blob.cpp.o 

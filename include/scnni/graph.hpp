@@ -1,11 +1,12 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-04 13:57:36
+ * @LastEditTime: 2023-03-05 09:21:39
  * @Description: 
  * @FilePath: /SCNNI/include/graph.hpp
  */
-
+#ifndef SCNNI_GRAPH_HPP_
+#define SCNNI_GRAPH_HPP_
 #include "layer.hpp"
 #include "blob.hpp"
 #include <cstddef>
@@ -18,16 +19,15 @@ class Graph {
     Graph() = default;
     ~Graph() = default;
 
-    auto LoadModel() -> int;
-    auto LoadParam() -> int;
+    auto LoadParam(const std::string &path) -> int;
+    auto LoadWeight() -> int;
 
     auto CreateExcecutor() const -> Excecutor;
 
     std::vector<std::shared_ptr<Layer>> layers_;
-    std::vector<Blob> blobs_;
+    std::vector<std::shared_ptr<Blob>> blobs_;
 
   protected:
-    auto FindBlobIdByName(const std::string &name) const -> int;
     friend class Excecutor;
     auto ForwardLayer(int layer_id, std::shared_ptr<std::vector<Tensor<float>>> blobs) const;
 };
@@ -49,3 +49,4 @@ class Excecutor {
    std::vector<Tensor<float>> blob_tensors_; 
 };
 }  // namespace scnni
+#endif

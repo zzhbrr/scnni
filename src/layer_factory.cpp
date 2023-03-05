@@ -1,12 +1,12 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-04 12:29:59
+ * @LastEditTime: 2023-03-05 12:32:14
  * @Description: 
  * @FilePath: /SCNNI/src/layer_factory.cpp
  */
-#include "layer_factory.hpp"
-#include "macros.h"
+#include "scnni/layer_factory.hpp"
+#include "scnni/macros.h"
 #include <memory>
 #include <string>
 
