@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05 
- * @LastEditTime: 2023-03-06 06:39:45
+ * @LastEditTime: 2023-03-06 16:06:59
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/operator.hpp
  */
@@ -31,6 +31,14 @@ class Parameter {
     explicit Parameter(std::vector<float> fa): type_(ParamType::FloatArray), fa_(std::move(fa)) {};
 
     static auto GetFromString(const std::string &s) -> Parameter;
+
+    auto GetValueInt() -> int; 
+    auto GetValueFloat() -> float; 
+    auto GetValueString() -> std::string; 
+    auto GetValueBool() -> bool; 
+    auto GetValueIntArray() -> std::vector<int>; 
+    auto GetValueStringArray() -> std::vector<std::string>; 
+    auto GetValueFloatArray() -> std::vector<float>; 
   private:
     ParamType type_{ParamType::Unknow};
     

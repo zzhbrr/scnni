@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05
- * @LastEditTime: 2023-03-05 18:07:56
+ * @LastEditTime: 2023-03-06 16:11:20
  * @Description: 
  * @FilePath: /SCNNI/src/operator.cpp
  */
@@ -107,5 +107,31 @@ auto Attribute::Get() -> std::vector<T> {
   }
   return weights;
 }
+
+auto Parameter::GetValueInt() -> int {
+  SCNNI_ASSERT(type_ == ParamType::Int, "Param Type Error");
+  return i_;
+}
+auto Parameter::GetValueFloat() -> float {
+  SCNNI_ASSERT(type_ == ParamType::Float, "Param Type Error");
+  return f_;
+}
+auto Parameter::GetValueString() -> std::string {
+    SCNNI_ASSERT(type_ == ParamType::String, "Param Type Error");
+    return s_;
+}
+auto Parameter::GetValueBool() -> bool {
+    SCNNI_ASSERT(type_ == ParamType::Bool, "Param Type Error");
+    return b_;
+}
+auto Parameter::GetValueIntArray() -> std::vector<int> {
+    SCNNI_ASSERT(type_ == ParamType::IntArray, "Param Type Error");
+    return ia_;
+}
+auto Parameter::GetValueStringArray() -> std::vector<std::string> {
+    SCNNI_ASSERT(type_ == ParamType::StringArray, "Param Type Error");
+    return sa_;
+}
+
 
 } // namespace scnni
