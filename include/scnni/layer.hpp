@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-05 15:51:45
+ * @LastEditTime: 2023-03-06 12:27:29
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/layer.hpp
+ * @FilePath: /scnni/include/scnni/layer.hpp
  */
 
 #ifndef SCNNI_LAYER_HPP_
@@ -22,14 +22,12 @@ class Layer {
 
     /**
      * @description: Layer的前向计算
-     * @param {vector<std::shared_ptr<Tensor<float>>>& input_blobs, std::shared_ptr<std::vector<std::shared_ptr<Tensor<float>>>>} output_blobs
+     * @param std::vector<std::shared_ptr<Tensor<float>>>& input_blobs
+     * @param std::shared_ptr<std::vector<std::shared_ptr<Tensor<float>>>> output_blobs
      * @return {*}
      */
     virtual auto Forward(const std::vector<std::shared_ptr<Tensor<float>>>& input_blobs, std::shared_ptr<std::vector<std::shared_ptr<Tensor<float>>>> output_blobs) const -> int; 
     virtual auto Forward(const std::shared_ptr<Tensor<float>>& input_blobs, std::shared_ptr<Tensor<float>> output_blobs) const ->int;
-
-    virtual auto LoadModel() -> int;
-    virtual auto LoadParams() -> int;
 
     auto LayerName() const -> const std::string & { return this->layer_name_; }
 
