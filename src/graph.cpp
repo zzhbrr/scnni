@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-06 08:11:09
+ * @LastEditTime: 2023-03-06 09:54:28
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -184,15 +184,17 @@ auto Graph::LoadParam(const std::string &path) -> int {
                 std::string key;
                 std::string value;
                 std::getline(line_stream, key, '=');
-                std::getline(line_stream, value);
-                // line_stream >> value;
+                // std::getline(line_stream, value);
+                line_stream >> value;
+                printf("value is %s\n", value.c_str());
+                key.erase(key.begin());
 
                 if (key[0] == '@') {
-                    LoadAttributeSize(op, key, value);
+                    LoadAttributeSize(op, key.substr(1), value);
                 } else if (key[0] == '$') {
                     ;
                 } else if (key[0] == '#') {
-                    LoadShape(op, key, value);
+                    LoadShape(op, key.substr(1), value);
                 } else {
                     LoadParameter(op, key, value);
                 }

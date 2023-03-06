@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-06 06:32:29
+ * @LastEditTime: 2023-03-06 09:59:10
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/graph.hpp
  */
@@ -20,7 +20,7 @@ class Graph {
     ~Graph() = default;
 
     auto LoadParam(const std::string &path) -> int;
-    auto LoadWeight() -> int;
+    auto LoadWeight(const std::string &path) -> int;
     auto GetBlobByName(const std::string &name) -> std::shared_ptr<Blob>;
 
     auto CreateExcecutor() const -> Excecutor;
