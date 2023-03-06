@@ -1,13 +1,13 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-06 09:59:10
+ * @LastEditTime: 2023-03-06 10:05:02
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/graph.hpp
  */
 #ifndef SCNNI_GRAPH_HPP_
 #define SCNNI_GRAPH_HPP_
-#include "scnni/layer.hpp"
+#include "scnni/operator.hpp"
 #include "scnni/blob.hpp"
 #include <cstddef>
 #include <memory>
@@ -25,7 +25,7 @@ class Graph {
 
     auto CreateExcecutor() const -> Excecutor;
 
-    std::vector<std::shared_ptr<Layer>> layers_;
+    std::vector<std::shared_ptr<Operator>> operators_;
     std::vector<std::shared_ptr<Blob>> blobs_;
 
   protected:

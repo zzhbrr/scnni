@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-06 09:54:28
+ * @LastEditTime: 2023-03-06 10:14:45
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -132,7 +132,7 @@ auto Graph::LoadParam(const std::string &path) -> int {
                 LOG_DEBUG("layer_count: %d, blob_count: %d\n", layer_count,
                           blob_count);
             }
-            layers_.resize(layer_count);
+            operators_.resize(layer_count);
             blobs_.resize(blob_count);
         } else { // load layer
             if (loaded_layer_count == layer_count) {
@@ -206,8 +206,12 @@ auto Graph::LoadParam(const std::string &path) -> int {
     return 1;
 }
 
-auto Graph::LoadWeight() -> int {
-    return 1;
+auto Graph::LoadWeight(const std::string& path) -> int {
+
+    for (size_t i = 0; i < operators_.size(); i ++) {
+        std::shared_ptr<Operator> op = operators_[i];
+
+    }
 }
 
 
