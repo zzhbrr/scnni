@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 project(SCNNI LANGUAGES CXX)
 
 # Presettings
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to `Debug` as none was specified.")
     set(CMAKE_BUILD_TYPE "Debug")
@@ -27,7 +27,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
-
 
 # 单元测试
 add_subdirectory(test)
