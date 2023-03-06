@@ -20,7 +20,7 @@
  *   of the MIT license.  See the LICENSE file for details.                *
  *                                                                         *
  ***************************************************************************/
-
+#pragma GCC diagnostic ignored "-Wgnu-statement-expression"
 #ifndef HSTOREDEBUGLOG_H
 #define HSTOREDEBUGLOG_H
 

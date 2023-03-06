@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 project(SCNNI LANGUAGES CXX)
 
 # Presettings
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to `Debug` as none was specified.")
     set(CMAKE_BUILD_TYPE "Debug")

@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05 
- * @LastEditTime: 2023-03-05 16:16:53
+ * @LastEditTime: 2023-03-06 11:21:02
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/operator.hpp
+ * @FilePath: /scnni/include/scnni/operator.hpp
  */
 #ifndef SCNNI_OPERATOR_HPP_
 #define SCNNI_OPERATOR_HPP_
@@ -19,8 +19,8 @@ namespace scnni {
 class Blob;
 class Parameter {
   public:
-    enum class ParamType {Unkown, Int, Float, String, Bool, IntArray, StringArray, FloatArray};
-    Parameter() = default;;
+    enum class ParamType {Unknow, Int, Float, String, Bool, IntArray, StringArray, FloatArray};
+    Parameter() = default;
     explicit Parameter(int i): type_(ParamType::Int), i_(i) {};
     explicit Parameter(float f): type_(ParamType::Float), f_(f) {};
 
@@ -30,9 +30,9 @@ class Parameter {
     explicit Parameter(std::vector<std::string> sa): type_(ParamType::StringArray), sa_(std::move(sa)) {};
     explicit Parameter(std::vector<float> fa): type_(ParamType::FloatArray), fa_(std::move(fa)) {};
 
-    static auto InitFromString(const std::string &s) -> Parameter;
+    static auto GetFromString(const std::string &s) -> Parameter;
   private:
-    ParamType type_{ParamType::Unkown};
+    ParamType type_{ParamType::Unknow};
     
     // value
     int i_;
@@ -45,21 +45,34 @@ class Parameter {
 
 };
 class Attribute {
+  public:
+    enum class AttrType {Unknow, Null, Float32, Float64, Float16, Int32, Int64, Int16, Int8, Uint8, Bool};
+    AttrType type_{AttrType::Unknow};
+    std::vector<char> weight_; 
+    std::vector<int> shape_;  
 
+  /**
+   * 从节点中加载权重参数
+   * @tparam T 权重类型
+   * @return 权重参数数组
+   */
+  template<class T> 
+  auto Get() -> std::vector<T>;
 };
 
+
 class Operator {
+  public:
+    Operator(std::string type, std::string name): type_(std::move(type)), name_(std::move(name)) {};
     std::vector<std::shared_ptr<Blob>> inputs_;
     std::vector<std::shared_ptr<Blob>> outputs_;
 
     std::string type_;
     std::string name_;
 
-    std::vector<std::string> inputnames_;
-    std::map<std::string, Parameter> params_;  // 参数形式
-    std::map<std::string, Attribute> attrs_;  // 参数值
-
-    std::shared_ptr<Layer> layer;
+    std::vector<std::string> inputnames_; // input blob names
+    std::map<std::string, Parameter> params_;
+    std::map<std::string, Attribute> attrs_;
 };
 } // namespace scnni
 

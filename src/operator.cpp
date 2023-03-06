@@ -1,34 +1,37 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05
- * @LastEditTime: 2023-03-05 16:19:06
+ * @LastEditTime: 2023-03-05 18:07:56
  * @Description: 
  * @FilePath: /SCNNI/src/operator.cpp
  */
 
 #include "scnni/operator.hpp"
+#include "scnni/logger.hpp"
+#include "scnni/macros.h"
+#include <sstream>
 namespace scnni {
-auto Parameter::InitFromString(const std::string &s) -> Parameter {
+auto Parameter::GetFromString(const std::string &s) -> Parameter {
     Parameter p;
-    p.type_ = 0;
+    p.type_ = ParamType::Unknow;
 
-    if (value == "None" || value == "()" || value == "[]")
+    if (s == "None" || s == "()" || s == "[]")
     {
         return p;
     }
 
-    if (value == "True" || value == "False")
+    if (s == "True" || s == "False")
     {
         // bool
-        p.type = 1;
-        p.b = value == "True";
+        p.type_ = ParamType::Bool;
+        p.b_ = s == "True";
         return p;
     }
 
-    if (value[0] == '(' || value[0] == '[')
+    if (s[0] == '(' || s[0] == '[')
     {
         // list
-        std::string lc = value.substr(1, value.size() - 2);
+        std::string lc = s.substr(1, s.size() - 2);
         std::istringstream lcss(lc);
 
         while (!lcss.eof())
@@ -39,45 +42,70 @@ auto Parameter::InitFromString(const std::string &s) -> Parameter {
             if ((elem[0] != '-' && (elem[0] < '0' || elem[0] > '9')) || (elem[0] == '-' && (elem[1] < '0' || elem[1] > '9')))
             {
                 // string
-                p.type = 7;
-                p.as.push_back(elem);
+                p.type_ = ParamType::StringArray;
+                p.sa_.push_back(elem);
             }
             else if (elem.find('.') != std::string::npos || elem.find('e') != std::string::npos)
             {
                 // float
-                p.type = 6;
-                p.af.push_back(std::stof(elem));
+                p.type_ = ParamType::FloatArray;
+                p.fa_.push_back(std::stof(elem));
             }
             else
             {
                 // integer
-                p.type = 5;
-                p.ai.push_back(std::stoi(elem));
+                p.type_ = ParamType::IntArray;
+                p.ia_.push_back(std::stoi(elem));
             }
         }
         return p;
     }
 
-    if ((value[0] != '-' && (value[0] < '0' || value[0] > '9')) || (value[0] == '-' && (value[1] < '0' || value[1] > '9')))
+    if ((s[0] != '-' && (s[0] < '0' || s[0] > '9')) || (s[0] == '-' && (s[1] < '0' || s[1] > '9')))
     {
         // string
-        p.type = 4;
-        p.s = value;
+        p.type_ = ParamType::String;
+        p.s_ = s;
         return p;
     }
 
-    if (value.find('.') != std::string::npos || value.find('e') != std::string::npos)
+    if (s.find('.') != std::string::npos || s.find('e') != std::string::npos)
     {
         // float
-        p.type = 3;
-        p.f = std::stof(value);
+        p.type_ = ParamType::Float;
+        p.f_ = std::stof(s);
         return p;
     }
 
     // integer
-    p.type = 2;
-    p.i = std::stoi(value);
+    p.type_ = ParamType::Int;
+    p.i_ = std::stoi(s);
     return p;
-
 }
+
+template<class T>
+auto Attribute::Get() -> std::vector<T> {
+  /// 检查节点属性中的权重类型
+  SCNNI_ASSERT(!weight_.empty(), "weight empty");
+  SCNNI_ASSERT(type_ != AttrType::Unknow, "attrtype unknow");
+  std::vector<T> weights;
+  switch (type_) {
+    case AttrType::Float32: {
+      const bool is_float = std::is_same<T, float>::value;
+      SCNNI_ASSERT(is_float == true, "");
+      const uint32_t float_size = sizeof(float);
+      SCNNI_ASSERT(weight_.size() % float_size == 0, "");
+      for (uint32_t i = 0; i < weight_.size() / float_size; ++i) {
+        float weight = *(reinterpret_cast<float *>(weight_.data()) + i);
+        weights.push_back(weight);
+      }
+      break;
+    }
+    default: {
+      LOG_ERROR("AttrType Unsupport");
+    }
+  }
+  return weights;
+}
+
 } // namespace scnni

@@ -1,14 +1,14 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-05 09:21:39
+ * @LastEditTime: 2023-03-06 10:05:02
  * @Description: 
- * @FilePath: /SCNNI/include/graph.hpp
+ * @FilePath: /SCNNI/include/scnni/graph.hpp
  */
 #ifndef SCNNI_GRAPH_HPP_
 #define SCNNI_GRAPH_HPP_
-#include "layer.hpp"
-#include "blob.hpp"
+#include "scnni/operator.hpp"
+#include "scnni/blob.hpp"
 #include <cstddef>
 #include <memory>
 #include <vector>
@@ -20,11 +20,12 @@ class Graph {
     ~Graph() = default;
 
     auto LoadParam(const std::string &path) -> int;
-    auto LoadWeight() -> int;
+    auto LoadWeight(const std::string &path) -> int;
+    auto GetBlobByName(const std::string &name) -> std::shared_ptr<Blob>;
 
     auto CreateExcecutor() const -> Excecutor;
 
-    std::vector<std::shared_ptr<Layer>> layers_;
+    std::vector<std::shared_ptr<Operator>> operators_;
     std::vector<std::shared_ptr<Blob>> blobs_;
 
   protected:
