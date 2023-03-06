@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-06 12:05:02
+ * @LastEditTime: 2023-03-06 17:16:08
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/layer.hpp
  */
@@ -22,7 +22,8 @@ class Layer {
 
     /**
      * @description: Layer的前向计算
-     * @param input_blobs,  output_blobs
+     * @param std::vector<std::shared_ptr<Tensor<float>>>& input_blobs
+     * @param std::shared_ptr<std::vector<std::shared_ptr<Tensor<float>>>> output_blobs
      * @return {*}
      */
     virtual auto Forward(const std::vector<std::shared_ptr<Tensor<float>>>& input_blobs, std::shared_ptr<std::vector<std::shared_ptr<Tensor<float>>>> output_blobs) const -> int; 
