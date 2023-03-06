@@ -20,14 +20,17 @@ find_package(Eigen3 REQUIRED)
 
 # Add Build library & execuable
 
-file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.cpp)
-add_library(${PROJECT_NAME} SHARED ${SRCS})
-target_include_directories(${PROJECT_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
+# file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.cpp)
+# add_library(${PROJECT_NAME} SHARED ${SRCS})
+# target_include_directories(${PROJECT_NAME} PUBLIC
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#     $<INSTALL_INTERFACE:include>
+# )
+# target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
 
+add_executable(tmp src/tmp.cpp)
+# add_executable(tmp src/tmp.cpp src/tensor.cpp)
+target_link_libraries(tmp PUBLIC Eigen3::Eigen)
 
 # 单元测试
-add_subdirectory(test)
+# add_subdirectory(test)

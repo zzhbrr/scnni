@@ -56,8 +56,10 @@ class Operator {
     std::string name_;
 
     std::vector<std::string> inputnames_;
-    std::map<std::string, Parameter> params_;
-    std::map<std::string, Attribute> attrs_;
+    std::map<std::string, Parameter> params_;  // 参数形式
+    std::map<std::string, Attribute> attrs_;  // 参数值
+
+    std::shared_ptr<Layer> layer;
 };
 } // namespace scnni
 

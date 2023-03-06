@@ -1,6 +1,6 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04 08:53:12
+ * @Date: 2023-03-04
  * @LastEditTime: 2023-03-04 12:23:42
  * @Description: 
  * @FilePath: /SCNNI/include/layer_factory.hpp

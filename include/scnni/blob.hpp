@@ -19,11 +19,11 @@ class Blob {
     Blob();
 
     int id_{-1};
-    std::shared_ptr<Operator> producer_; // 产生 blob 的layer
-    std::vector<std::shared_ptr<Operator>> consumers_; // 以此 blob 为输入的 layer
+    std::shared_ptr<Operator> producer_; // 一个产生者：产生 blob 的layer
+    std::vector<std::shared_ptr<Operator>> consumers_; // 多个消费者：以此 blob 为输入的 layer
 
     std::vector<int> shape_;
-    std::vector<Tensor<float>> data_;
+    std::vector<Tensor<float>> data_;  //操作数：可包含多个bz的Tensor
 };
 } // namespace scnni
 #endif
