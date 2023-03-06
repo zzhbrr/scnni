@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-06 17:16:56
+ * @LastEditTime: 2023-03-06 17:28:57
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/tensor.hpp
+ * @FilePath: /scnni/include/scnni/tensor.hpp
  */
 
 #ifndef SCNNI_TENSOR_HPP_
@@ -27,43 +27,43 @@ class Tensor<float> {
   public:
     explicit Tensor() = default;
 
-//     /**
-//      * @description: 声明构造函数(创建张量)
-//      * @param channels
-//      * @param rows
-//      * @param cols
-//      * @return {*}
-//      */
-//     explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols);
+    /**
+     * @description: 声明构造函数(创建张量)
+     * @param channels
+     * @param rows
+     * @param cols
+     * @return {*}
+     */
+    explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols);
     
-//     /**
-//      * @description: 初始化shapes
-//      */
-//     explicit Tensor(const std::vector<uint32_t>& shapes);
+    /**
+     * @description: 初始化shapes
+     */
+    explicit Tensor(const std::vector<uint32_t>& shapes);
 
-//     /**
-//      * @description: 构造拷贝函数
-//      * @param tensor
-//      * @return {*}
-//      */
-//     Tensor(const Tensor& tensor);
+    /**
+     * @description: 构造拷贝函数
+     * @param tensor
+     * @return {*}
+     */
+    Tensor(const Tensor& tensor);
     
-//     /**
-//      * @description: 重载=，赋值拷贝函数
-//      */    
-//     auto operator=(const Tensor& tensor) -> Tensor<float>&;
+    /**
+     * @description: 重载=，赋值拷贝函数
+     */    
+    auto operator=(const Tensor& tensor) -> Tensor<float>&;
 
-//     /**
-//      * @description: 移动构造函数
-//      * @param {Tensor&&} tensor
-//      * @return {*}
-//      */   
-//     Tensor(Tensor&& tensor) noexcept ;
+    /**
+     * @description: 移动构造函数
+     * @param {Tensor&&} tensor
+     * @return {*}
+     */   
+    Tensor(Tensor&& tensor) noexcept ;
     
-//     /**
-//      * @description: 重载=，赋值移动
-//      */    
-//     auto operator=(Tensor&& tenson) noexcept -> Tensor<float>&;
+    /**
+     * @description: 重载=，赋值移动
+     */    
+    auto operator=(Tensor&& tenson) noexcept -> Tensor<float>&;
 
     auto Channels() const -> uint32_t;  //返回张量的通道数（第一维度）
     auto Rows() const -> uint32_t;  //返回张量的行数（第二维度）
@@ -134,72 +134,72 @@ class Tensor<float> {
      */
     auto At(uint32_t channel, uint32_t row, uint32_t col) -> float&;
 
-//     /**
-//      * @description: 填充张量
-//      * @param pads 填充张量的尺寸
-//      * @param padding_value 填充张量
-//      */
-//     void Padding(const std::vector<uint32_t>& pads, float padding_value);
+    /**
+     * @description: 填充张量
+     * @param pads 填充张量的尺寸
+     * @param padding_value 填充张量
+     */
+    void Padding(const std::vector<uint32_t>& pads, float padding_value);
 
-//     /**
-//      * @description: 使用value值去初始化向量
-//      * @param value
-//      */
-//     void Fill(float value);
+    /**
+     * @description: 使用value值去初始化向量
+     * @param value
+     */
+    void Fill(float value);
 
-//     /**
-//      * @description: 使用values中的数据初始化张量
-//      * @param values 用来初始化张量的数据
-//      */
-//     void Fill(const std::vector<float>& values);
+    /**
+     * @description: 使用values中的数据初始化张量
+     * @param values 用来初始化张量的数据
+     */
+    void Fill(const std::vector<float>& values);
 
-//     /**
-//      * @description: 以常量1初始化张量
-//      */
-//     void Ones();
+    /**
+     * @description: 以常量1初始化张量
+     */
+    void Ones();
 
-//     /**
-//      * @description: 以随机值初始化张量
-//      */
-//     void Rand();
+    /**
+     * @description: 以随机值初始化张量
+     */
+    void Rand();
 
-//     /**
-//      * @description: 打印张量
-//      */
-//     void Show();
+    /**
+     * @description: 打印张量
+     */
+    void Show();
 
-//     /// reshape和review的区别
-//     /// reshape是满足列优先的
-//     /// review是满足行优先的
-//     /**
-//      * 1 3 4 7
-//      * review(2,2)  reshape(2,2)
-//      * 1 3          1 4
-//      * 4 7          3 7
-//      */
+    /// reshape和review的区别
+    /// reshape是满足列优先的
+    /// review是满足行优先的
+    /**
+     * 1 3 4 7
+     * review(2,2)  reshape(2,2)
+     * 1 3          1 4
+     * 4 7          3 7
+     */
     
-//     /**
-//      * @description: 张量的实际尺寸大小的Reshape
-//      * @param shapes 张量的实际尺寸大小
-//      */
-//     void ReRawshape(const std::vector<uint32_t>& shapes);
+    /**
+     * @description: 张量的实际尺寸大小的Reshape
+     * @param shapes 张量的实际尺寸大小
+     */
+    void ReRawshape(const std::vector<uint32_t>& shapes);
 
-//     /**
-//      * @description: 张量的实际尺寸大小的Reshape pytorch兼容
-//      * @param shapes 张量的实际尺寸大小
-//      */
-//     void ReRawView(const std::vector<uint32_t>& shapes);
+    /**
+     * @description: 张量的实际尺寸大小的Reshape pytorch兼容
+     * @param shapes 张量的实际尺寸大小
+     */
+    void ReRawView(const std::vector<uint32_t>& shapes);
 
-//     /**
-//      * @description: 展开张量
-//      */    
-//     void Flatten();
+    /**
+     * @description: 展开张量
+     */    
+    void Flatten();
 
-//     /**
-//      * @description: 对张量中的元素进行过滤
-//      * @param filter 过滤函数
-//      */
-//     void Transform(const std::function<float(float)>& filter);
+    /**
+     * @description: 对张量中的元素进行过滤
+     * @param filter 过滤函数
+     */
+    void Transform(const std::function<float(float)>& filter);
 
     /**
      * @description: 返回一个深拷贝后的张量
@@ -252,15 +252,15 @@ auto TensorPadding(
 auto TensorIsSame(const std::shared_ptr<Tensor<float>>& a,
                   const std::shared_ptr<Tensor<float>>& b) -> bool;
 
-// /**
-//  * 张量相加
-//  * @param tensor1 输入张量1
-//  * @param tensor2 输入张量2
-//  * @param output_tensor 输出张量
-//  */
-// void TensorElementAdd(const std::shared_ptr<Tensor<float>>& tensor1,
-//                       const std::shared_ptr<Tensor<float>>& tensor2,
-//                       const std::shared_ptr<Tensor<float>>& output_tensor);
+/**
+ * 张量相加
+ * @param tensor1 输入张量1
+ * @param tensor2 输入张量2
+ * @param output_tensor 输出张量
+ */
+void TensorElementAdd(const std::shared_ptr<Tensor<float>>& tensor1,
+                      const std::shared_ptr<Tensor<float>>& tensor2,
+                      const std::shared_ptr<Tensor<float>>& output_tensor);
 
 /**
  * 张量相加
@@ -271,15 +271,15 @@ auto TensorIsSame(const std::shared_ptr<Tensor<float>>& a,
 auto TensorElementAdd(const std::shared_ptr<Tensor<float>>& tensor1,
 											const std::shared_ptr<Tensor<float>>& tensor2) -> std::shared_ptr<Tensor<float>>;
 
-// /**
-//  * @description: 矩阵点乘
-//  * @param tensor1 输入张量1
-//  * @param tensor2 输入张量2
-//  * @param output_tensor 输出张量
-//  */
-// void TensorElementMultiply(const std::shared_ptr<Tensor<float>>& tensor1,
-// 														const std::shared_ptr<Tensor<float>>& tensor2,
-// 														const std::shared_ptr<Tensor<float>>& output_tensor);
+/**
+ * @description: 矩阵点乘
+ * @param tensor1 输入张量1
+ * @param tensor2 输入张量2
+ * @param output_tensor 输出张量
+ */
+void TensorElementMultiply(const std::shared_ptr<Tensor<float>>& tensor1,
+														const std::shared_ptr<Tensor<float>>& tensor2,
+														const std::shared_ptr<Tensor<float>>& output_tensor);
 
 /**
  * 张量相乘

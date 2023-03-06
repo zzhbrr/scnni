@@ -4,11 +4,10 @@
 
 #include "scnni/tensor.hpp"
 #include "scnni/macros.h"
-#include <glog/logging.h>
 #include <memory>
 #include <cmath>
 
-// namespace scnni {
+namespace scnni {
 
 //!
 Tensor<float>::Tensor(uint32_t channels, uint32_t rows, uint32_t cols) {
@@ -100,12 +99,12 @@ auto Tensor<float>::Size() const -> uint32_t {
 
 //!
 void Tensor<float>::SetData(const Eigen::Tensor<float, 3>& data) {
-  CHECK(data.dimensions()[0] == this->data_.dimensions()[0])
-    << data.dimensions()[0] << " != " << this->data_.dimensions()[0];
-	CHECK(data.dimensions()[1] == this->data_.dimensions()[1])
-		<< data.dimensions()[1] << " != " << this->data_.dimensions()[1];
-  CHECK(data.dimensions()[2] == this->data_.dimensions()[2])
-		<< data.dimensions()[2] << " != " << this->data_.dimensions()[2];
+  // CHECK(data.dimensions()[0] == this->data_.dimensions()[0])
+  //   << data.dimensions()[0] << " != " << this->data_.dimensions()[0];
+	// CHECK(data.dimensions()[1] == this->data_.dimensions()[1])
+	// 	<< data.dimensions()[1] << " != " << this->data_.dimensions()[1];
+  // CHECK(data.dimensions()[2] == this->data_.dimensions()[2])
+	// 	<< data.dimensions()[2] << " != " << this->data_.dimensions()[2];
   this->data_ = data;
 }
 
@@ -117,7 +116,7 @@ auto Tensor<float>::Empty() const -> bool {
 
 //!
 auto Tensor<float>::Index(uint32_t offset) const -> float {
-  CHECK(offset < this->data_.size()) << "Tensor capacity is not enough!";
+  // CHECK(offset < this->data_.size()) << "Tensor capacity is not enough!";
   return this->data_(offset);
 }
 
@@ -173,17 +172,17 @@ auto Tensor<float>::GetData() const -> const Eigen::Tensor<float, 3>& {
 
 //!
 auto Tensor<float>::At(uint32_t channel, uint32_t row, uint32_t col) const -> float {
-  CHECK_LT(row, this->Rows());
-  CHECK_LT(col, this->Cols());
-  CHECK_LT(channel, this->Channels());
+  // CHECK_LT(row, this->Rows());
+  // CHECK_LT(col, this->Cols());
+  // CHECK_LT(channel, this->Channels());
   return this->data_(row, col, channel);
 }
 
 //!
 auto Tensor<float>::At(uint32_t channel, uint32_t row, uint32_t col) -> float& {
-  CHECK_LT(row, this->Rows());
-  CHECK_LT(col, this->Cols());
-  CHECK_LT(channel, this->Channels());
+  // CHECK_LT(row, this->Rows());
+  // CHECK_LT(col, this->Cols());
+  // CHECK_LT(channel, this->Channels());
   return this->data_(row, col, channel);
 }
 
@@ -216,7 +215,7 @@ void Tensor<float>::Fill(float value) {
 void Tensor<float>::Fill(const std::vector<float>& values) {
   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
   const uint32_t total_elems = this->data_.size();
-  CHECK_EQ(values.size(), total_elems);  //检查size相同
+  // CHECK_EQ(values.size(), total_elems);  //检查size相同
 	//基本属性
   const uint32_t rows = this->Rows();
   const uint32_t cols = this->Cols();
@@ -229,7 +228,7 @@ void Tensor<float>::Fill(const std::vector<float>& values) {
 //     const Eigen::MatrixXf& channel_data_t = Eigen::MatrixXf(values.data() + i * planes, this->Cols(), this->Rows());
 //     channel_data = channel_data_t.transpose();
 //   }
-// }
+}
 
 //!
 void Tensor<float>::Ones() {
@@ -499,7 +498,7 @@ auto TensorBroadcast(const std::shared_ptr<Tensor<float>>& s1,
 		}
 		return {s1add, s2};
 	}
-	LOG(FATAL) << "Broadcast shape is not adapting!";
+	// LOG(FATAL) << "Broadcast shape is not adapting!";
 	return {s1, s2};
 }
 
@@ -536,4 +535,4 @@ auto TensorBroadcast(const std::shared_ptr<Tensor<float>>& s1,
 //   return output;
 // }
 
-// }  // namespace scnni
+}  // namespace scnni
