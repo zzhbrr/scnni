@@ -6,6 +6,7 @@
 #include "scnni/macros.h"
 #include <glog/logging.h>
 #include <memory>
+#include <cmath>
 
 namespace scnni {
 
@@ -371,7 +372,23 @@ auto TensorIsSame(const std::shared_ptr<Tensor<float>>& a,
   if(a->Shapes() != b->Shapes()) {
     return false;
   }
-  int is_same = (a->GetData() == b->GetData());  //针对整数，不针对float
+	bool is_same = true;
+	for(uint32_t i = 0; i < a->Channels(); i++){
+		for(uint32_t j = 0; j < a->Rows(); j++){
+			for(uint32_t k = 0; k < a->Cols(); k++){
+				if(fabs(a->GetData()(i, j, k) - b->GetData()(i, j, k)) < 1e-5){
+					is_same = false;
+					break;
+				}
+			}
+			if(!is_same) {
+				break;
+			}
+		}
+		if(!is_same){
+			break;
+		}
+	}
   return is_same;
 }
 
