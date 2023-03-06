@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-06 12:27:29
+ * @LastEditTime: 2023-03-06 17:16:08
  * @Description: 
- * @FilePath: /scnni/include/scnni/layer.hpp
+ * @FilePath: /SCNNI/include/scnni/layer.hpp
  */
 
 #ifndef SCNNI_LAYER_HPP_

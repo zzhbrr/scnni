@@ -8,7 +8,7 @@
 #include <memory>
 #include <cmath>
 
-namespace scnni {
+// namespace scnni {
 
 //!
 Tensor<float>::Tensor(uint32_t channels, uint32_t rows, uint32_t cols) {
@@ -39,17 +39,17 @@ Tensor<float>::Tensor(const std::vector<uint32_t>& shapes) {
   }
 }
 
-/**
- * @description: 复制拷贝
- * @param {Tensor&} tensor
- * @return {*}
- */
-Tensor<float>::Tensor(const Tensor& tensor) {
-  if (this != &tensor) {
-    this->data_ = tensor.data_;
-    this->raw_shapes_ = tensor.raw_shapes_;
-  }
-}
+// /**
+//  * @description: 复制拷贝
+//  * @param {Tensor&} tensor
+//  * @return {*}
+//  */
+// Tensor<float>::Tensor(const Tensor& tensor) {
+//   if (this != &tensor) {
+//     this->data_ = tensor.data_;
+//     this->raw_shapes_ = tensor.raw_shapes_;
+//   }
+// }
 
 Tensor<float>::Tensor(Tensor<float>&& tensor) noexcept {
   if (this != &tensor) {
@@ -223,13 +223,13 @@ void Tensor<float>::Fill(const std::vector<float>& values) {
   const uint32_t channels = this->Channels();
   const uint32_t planes = rows * cols;
 
-  for(uint32_t i = 0; i < channels; ++i){
-    auto& channel_data = this->data_.Slice(i);
-		//指针起点为values.data() + i * planes, 大小为(this->Cols(), this->Rows())的vector片段
-    const Eigen::MatrixXf& channel_data_t = Eigen::MatrixXf(values.data() + i * planes, this->Cols(), this->Rows());
-    channel_data = channel_data_t.transpose();
-  }
-}
+//   for(uint32_t i = 0; i < channels; ++i){
+//     auto& channel_data = this->data_.Slice(i);
+// 		//指针起点为values.data() + i * planes, 大小为(this->Cols(), this->Rows())的vector片段
+//     const Eigen::MatrixXf& channel_data_t = Eigen::MatrixXf(values.data() + i * planes, this->Cols(), this->Rows());
+//     channel_data = channel_data_t.transpose();
+//   }
+// }
 
 //!
 void Tensor<float>::Ones() {
@@ -243,13 +243,13 @@ void Tensor<float>::Rand() {
   this->data_.setRandom();
 }
 
-//!
-void Tensor<float>::Show() {
-  for(uint32_t i = 0; i < this->Channels(); ++i) {
-    LOG(INFO) << "Channel: " << i;
-    LOG(INFO) << "\n" << this->data_.Slice(i);
-  }
-}
+// //!
+// void Tensor<float>::Show() {
+//   for(uint32_t i = 0; i < this->Channels(); ++i) {
+//     LOG(INFO) << "Channel: " << i;
+//     LOG(INFO) << "\n" << this->data_.Slice(i);
+//   }
+// }
 
 //!
 void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
@@ -536,4 +536,4 @@ auto TensorBroadcast(const std::shared_ptr<Tensor<float>>& s1,
 //   return output;
 // }
 
-}  // namespace scnni
+// }  // namespace scnni

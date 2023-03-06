@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-06 10:14:45
+ * @LastEditTime: 2023-03-06 15:47:09
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -12,6 +12,7 @@
 #include "scnni/logger.hpp"
 #include "scnni/macros.h"
 #include "scnni/operator.hpp"
+#include "scnni/store_zip.hpp"
 #include <cstddef>
 #include <exception>
 #include <fstream>
@@ -24,9 +25,11 @@
 namespace scnni {
 
 void LoadParameter(const std::shared_ptr<Operator>& op, const std::string& key, const std::string& value) {
+    LOG_DEBUG("Loading Params: %s", key.c_str());
     op->params_[key] = Parameter::GetFromString(value);
 }
-void LoadAttributeSize(const std::shared_ptr<Operator>& op, const std::string& key, const std::string& value) {
+void LoadAttribute(const std::shared_ptr<Operator>& op, const std::string& key, const std::string& value, pnnx::StoreZipReader& szr) {
+    LOG_DEBUG("Loading Attributes: %s", key.c_str());
     Attribute& att = op->attrs_[key];
     if (value.substr(value.find_last_of(')') + 1) != "f32") {
         UNREACHABLE("Attribute Type Unsupported");
@@ -35,11 +38,42 @@ void LoadAttributeSize(const std::shared_ptr<Operator>& op, const std::string& k
     std::string shape_str = value.substr(1, value.find_last_of(')') - 1);
     std::istringstream shape_stream(shape_str);
     
+    att.shape_.clear();
     while(!shape_stream.eof()) {
         std::string token;
         std::getline(shape_stream, token, ',');
         att.shape_.push_back(std::stoi(token));
     }
+    if (att.shape_.empty()) {
+        return ;
+    }
+
+    size_t size = 1;
+    for (int i : att.shape_)
+    {
+        size *= i;
+    }
+
+    size_t bytesize = size * 4; // float size
+
+    std::string filename = op->name_ + "." + key;
+
+    size_t filesize = szr.get_file_size(filename);
+
+    if (filesize == 0)
+    {
+        // no such file
+        return;
+    }
+
+    if (filesize != bytesize)
+    {
+        fprintf(stderr, "file size not match expect %lu but got %lu\n", bytesize, filesize);
+    }
+
+    att.weight_.resize(bytesize);
+    szr.read_file(filename, static_cast<char*>(att.weight_.data()));
+
 }
 void LoadShape(const std::shared_ptr<Operator>& op, const std::string& key, const std::string& value) {
     std::shared_ptr<Blob> blob;
@@ -89,12 +123,18 @@ auto Graph::GetBlobByName(const std::string &name) -> std::shared_ptr<Blob> {
     UNREACHABLE("Blob Not Found");
 }
 
-auto Graph::LoadParam(const std::string &path) -> int {
-    if (path.empty()) {
+auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) -> int {
+    if (parampath.empty() || binpath.empty()) {
         LOG_ERROR("LoadModel: file path is empty");
         return 0;
     }
-    std::ifstream infile(path);
+    std::ifstream infile(parampath);
+    pnnx::StoreZipReader szr;
+    if (szr.open(binpath) != 0) {
+        fprintf(stderr, "open failed\n");
+        return -1;
+    }
+
     std::string line_str;
     std::stringstream line_stream;
 
@@ -108,15 +148,15 @@ auto Graph::LoadParam(const std::string &path) -> int {
 
     SCNNI_ASSERT(infile.good(), "file not good");
     while(infile.good()) {
-      std::getline(infile, line_str);
-      if (line_str.empty()) {
-        break;
+        std::getline(infile, line_str);
+        if (line_str.empty()) {
+            break;
         }
         line_stream.clear();
         line_stream.str(line_str);
-        std::string token;
 
         if (magic == -1) { // load magic
+            std::string token;
             line_stream >> token;
             try {
                 magic = std::stoi(token);
@@ -132,8 +172,8 @@ auto Graph::LoadParam(const std::string &path) -> int {
                 LOG_DEBUG("layer_count: %d, blob_count: %d\n", layer_count,
                           blob_count);
             }
-            operators_.resize(layer_count);
-            blobs_.resize(blob_count);
+            // operators_.resize(layer_count);
+            // blobs_.resize(blob_count);
         } else { // load layer
             if (loaded_layer_count == layer_count) {
                     break;
@@ -152,6 +192,7 @@ auto Graph::LoadParam(const std::string &path) -> int {
 
 
             std::shared_ptr<Operator> op = std::make_shared<Operator>(layer_type, layer_name);
+            operators_.push_back(op);
 
             op->inputs_.resize(input_blobs_count);
             op->outputs_.resize(output_blobs_count);
@@ -186,11 +227,12 @@ auto Graph::LoadParam(const std::string &path) -> int {
                 std::getline(line_stream, key, '=');
                 // std::getline(line_stream, value);
                 line_stream >> value;
+                printf("key is %s, ", key.c_str());
                 printf("value is %s\n", value.c_str());
                 key.erase(key.begin());
 
                 if (key[0] == '@') {
-                    LoadAttributeSize(op, key.substr(1), value);
+                    LoadAttribute(op, key.substr(1), value, szr);
                 } else if (key[0] == '$') {
                     ;
                 } else if (key[0] == '#') {
@@ -205,14 +247,5 @@ auto Graph::LoadParam(const std::string &path) -> int {
     
     return 1;
 }
-
-auto Graph::LoadWeight(const std::string& path) -> int {
-
-    for (size_t i = 0; i < operators_.size(); i ++) {
-        std::shared_ptr<Operator> op = operators_[i];
-
-    }
-}
-
 
 }  // namespace scnni
