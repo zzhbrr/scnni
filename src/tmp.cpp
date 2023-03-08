@@ -1,13 +1,12 @@
 /*
  * @Author: xzj
  * @Date: 2023-03-06 12:32:47
- * @LastEditTime: 2023-03-06 14:21:27
+ * @LastEditTime: 2023-03-07 11:04:44
  * @Description: 
- * @FilePath: /scnni/src/tmp.cpp
+ * @FilePath: /SCNNI/src/tmp.cpp
  */
 
 #include "scnni/tensor.hpp"
-#include <glog/logging.h>
 #include <memory>
 #include <iostream>
 

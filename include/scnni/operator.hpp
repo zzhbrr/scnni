@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05 
- * @LastEditTime: 2023-03-06 16:06:59
+ * @LastEditTime: 2023-03-08 09:51:05
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/operator.hpp
  */
@@ -57,7 +57,7 @@ class Attribute {
     enum class AttrType {Unknow, Null, Float32, Float64, Float16, Int32, Int64, Int16, Int8, Uint8, Bool};
     AttrType type_{AttrType::Unknow};
     std::vector<char> weight_; 
-    std::vector<int> shape_;  
+    std::vector<int> shape_;
 
   /**
    * 从节点中加载权重参数
@@ -71,9 +71,12 @@ class Attribute {
 
 class Operator {
   public:
+    enum class OpState {NoInit, Inited, Executed};
     Operator(std::string type, std::string name): type_(std::move(type)), name_(std::move(name)) {};
     std::vector<std::shared_ptr<Blob>> inputs_;
     std::vector<std::shared_ptr<Blob>> outputs_;
+    int refcnt_;
+    OpState state_{OpState::NoInit};
 
     std::string type_;
     std::string name_;
@@ -81,6 +84,10 @@ class Operator {
     std::vector<std::string> inputnames_; // input blob names
     std::map<std::string, Parameter> params_;
     std::map<std::string, Attribute> attrs_;
+
+    bool can_forward_inplace_{false};
+    std::unique_ptr<Layer> layer_;
+    // Layer layer_;
 };
 } // namespace scnni
 

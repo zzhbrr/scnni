@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 08:53:12
- * @LastEditTime: 2023-03-06 05:27:32
+ * @LastEditTime: 2023-03-07 07:44:18
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/layer_factory.hpp
  */
@@ -16,8 +16,7 @@
 namespace scnni {
 class LayerRegister {
   public:
-    // using layer_creator_func = std::shared_ptr<Layer> (*)();
-    using layer_creator_func = std::shared_ptr<Layer> (*)(const std::shared_ptr<Operator> &op);
+    using layer_creator_func = std::unique_ptr<Layer> (*)(const std::shared_ptr<Operator> &op);
 
     // Registry: Layer_type到layer_creator_func的映射
     using Registry = std::map<std::string, layer_creator_func>;
@@ -32,7 +31,7 @@ class LayerRegister {
      * @description: 创建Layer
      * @return {*}
      */
-    static auto CreateLayer(const std::string &layer_type, const std::shared_ptr<Operator> &op) -> std::shared_ptr<Layer>;
+    static auto CreateLayer(const std::string &layer_type, const std::shared_ptr<Operator> &op) -> std::unique_ptr<Layer>;
 
     /**
      * @description: 注册Layer到Registry中

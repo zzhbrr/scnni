@@ -9,16 +9,4 @@
 #include <iostream>
 
 TEST(layer_test, init_layer) {
-
-}
-
-auto main(int argc, char *argv[]) -> int {
-    testing::InitGoogleTest(&argc, argv);
-    int ret = RUN_ALL_TESTS();
-    if (ret == 0) {
-        std::cout << "<<<SUCCESS>>>" << std::endl;
-    } else {
-        std::cout << "FAILED" << std::endl;
-    }
-    return 0;
 }

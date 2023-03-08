@@ -38,17 +38,17 @@ Tensor<float>::Tensor(const std::vector<uint32_t>& shapes) {
   }
 }
 
-// /**
-//  * @description: 复制拷贝
-//  * @param {Tensor&} tensor
-//  * @return {*}
-//  */
-// Tensor<float>::Tensor(const Tensor& tensor) {
-//   if (this != &tensor) {
-//     this->data_ = tensor.data_;
-//     this->raw_shapes_ = tensor.raw_shapes_;
-//   }
-// }
+/**
+ * @description: 复制拷贝
+ * @param {Tensor&} tensor
+ * @return {*}
+ */
+Tensor<float>::Tensor(const Tensor& tensor) {
+  if (this != &tensor) {
+    this->data_ = tensor.data_;
+    this->raw_shapes_ = tensor.raw_shapes_;
+  }
+}
 
 Tensor<float>::Tensor(Tensor<float>&& tensor) noexcept {
   if (this != &tensor) {
@@ -57,13 +57,13 @@ Tensor<float>::Tensor(Tensor<float>&& tensor) noexcept {
   }
 }
 
-auto Tensor<float>::operator=(Tensor<float>&& tensor) noexcept -> Tensor<float>& {
-  if (this != &tensor) {
-    this->data_ = tensor.GetData();
-    this->raw_shapes_ = tensor.raw_shapes_;
-  }
-  return *this;
-}
+// auto Tensor<float>::operator=(Tensor<float>&& tensor) noexcept -> Tensor<float>& {
+//   if (this != &tensor) {
+//     this->data_ = tensor.GetData();
+//     this->raw_shapes_ = tensor.raw_shapes_;
+//   }
+//   return *this;
+// }
 
 auto Tensor<float>::operator=(const Tensor& tensor) -> Tensor<float>& {
   if (this != &tensor) {
@@ -212,15 +212,15 @@ void Tensor<float>::Fill(float value) {
 }
 
 //!
-void Tensor<float>::Fill(const std::vector<float>& values) {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
-  const uint32_t total_elems = this->data_.size();
-  // CHECK_EQ(values.size(), total_elems);  //检查size相同
-	//基本属性
-  const uint32_t rows = this->Rows();
-  const uint32_t cols = this->Cols();
-  const uint32_t channels = this->Channels();
-  const uint32_t planes = rows * cols;
+// void Tensor<float>::Fill(const std::vector<float>& values) {
+//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   const uint32_t total_elems = this->data_.size();
+//   // CHECK_EQ(values.size(), total_elems);  //检查size相同
+// 	//基本属性
+//   const uint32_t rows = this->Rows();
+//   const uint32_t cols = this->Cols();
+//   const uint32_t channels = this->Channels();
+//   const uint32_t planes = rows * cols;
 
 //   for(uint32_t i = 0; i < channels; ++i){
 //     auto& channel_data = this->data_.Slice(i);
@@ -228,7 +228,7 @@ void Tensor<float>::Fill(const std::vector<float>& values) {
 //     const Eigen::MatrixXf& channel_data_t = Eigen::MatrixXf(values.data() + i * planes, this->Cols(), this->Rows());
 //     channel_data = channel_data_t.transpose();
 //   }
-}
+// }
 
 //!
 void Tensor<float>::Ones() {
