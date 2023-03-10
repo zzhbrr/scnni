@@ -28,7 +28,7 @@ Tensor<float>::Tensor(const std::vector<uint32_t>& shapes) {
   uint32_t rows = shapes.at(1);
   uint32_t cols = shapes.at(2);
 
-  data_ = Eigen::Tensor<float, 3>(channels, rows, cols);
+  data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
   if (channels == 1 && rows == 1) {
     this->raw_shapes_ = std::vector<uint32_t>{cols};
   } else if (channels == 1) {
@@ -75,36 +75,33 @@ auto Tensor<float>::operator=(const Tensor& tensor) -> Tensor<float>& {
 
 //!
 auto Tensor<float>::Rows() const -> uint32_t {
-	SCNNI_ASSERT(!this->data_.size(), "data_ is empty"); 
-  return this->data_.dimensions()[1];
-}
-
-//!
-auto Tensor<float>::Cols() const -> uint32_t {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty"); 
-  return this->data_.dimensions()[2];
-}
-
-//!
-auto Tensor<float>::Channels() const -> uint32_t {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+	SCNNI_ASSERT(this->data_.size(), "data_ is empty"); 
   return this->data_.dimensions()[0];
 }
 
 //!
+auto Tensor<float>::Cols() const -> uint32_t {
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty"); 
+  return this->data_.dimensions()[1];
+}
+
+//!
+auto Tensor<float>::Channels() const -> uint32_t {
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+  return this->data_.dimensions()[2];
+}
+
+//!
 auto Tensor<float>::Size() const -> uint32_t {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   return this->data_.size();
 }
 
 //!
 void Tensor<float>::SetData(const Eigen::Tensor<float, 3>& data) {
-  // CHECK(data.dimensions()[0] == this->data_.dimensions()[0])
-  //   << data.dimensions()[0] << " != " << this->data_.dimensions()[0];
-	// CHECK(data.dimensions()[1] == this->data_.dimensions()[1])
-	// 	<< data.dimensions()[1] << " != " << this->data_.dimensions()[1];
-  // CHECK(data.dimensions()[2] == this->data_.dimensions()[2])
-	// 	<< data.dimensions()[2] << " != " << this->data_.dimensions()[2];
+  SCNNI_ASSERT(data.dimensions()[0] == this->data_.dimensions()[0], "Data shape not meet");
+  SCNNI_ASSERT(data.dimensions()[1] == this->data_.dimensions()[1], "Data shape not meet");
+  SCNNI_ASSERT(data.dimensions()[2] == this->data_.dimensions()[2], "Data shape not meet");
   this->data_ = data;
 }
 
@@ -128,13 +125,13 @@ auto Tensor<float>::Index(uint32_t offset) -> float & {
 
 //!
 auto Tensor<float>::Shapes() const -> std::vector<uint32_t> {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   return {this->Channels(), this->Rows(), this->Cols()};
 }
 
 //!
 auto Tensor<float>::RawShapes() const -> const std::vector<uint32_t>& {
-  SCNNI_ASSERT(!this->raw_shapes_.empty(),  "raw_shapes_ is empty");
+  SCNNI_ASSERT(this->raw_shapes_.empty(),  "raw_shapes_ is empty");
   return this->raw_shapes_;
 }
 
@@ -148,6 +145,12 @@ auto Tensor<float>::GetData() const -> const Eigen::Tensor<float, 3>& {
 	return this->data_;
 }
 
+auto Tensor<float>::Slice(uint32_t channel) const -> Eigen::Tensor<float, 3> {
+	Eigen::array<Eigen::DenseIndex, 3> offsets = { 0, 0, channel };  //起点
+	Eigen::array<Eigen::DenseIndex, 3> extends = { this->Rows(), this->Cols(), 1 };  //扩充
+	Eigen::Tensor<float, 2> tmp = this->data_.slice(offsets, extends);
+  return tmp;
+}
 // //!
 // /**
 //  * @description: 返回张量第channel通道中的数据
@@ -187,7 +190,7 @@ auto Tensor<float>::At(uint32_t channel, uint32_t row, uint32_t col) -> float& {
 }
 
 // void Tensor<float>::Padding(const std::vector<uint32_t>& pads, float padding_value) {
-//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
 //   CHECK_EQ(pads.size(), 4);
 //   uint32_t pad_rows1 = pads.at(0);  // up
 //   uint32_t pad_rows2 = pads.at(1);  // bottom
@@ -207,13 +210,13 @@ auto Tensor<float>::At(uint32_t channel, uint32_t row, uint32_t col) -> float& {
 
 //!
 void Tensor<float>::Fill(float value) {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   this->data_.setConstant(value);
 }
 
 //!
 // void Tensor<float>::Fill(const std::vector<float>& values) {
-//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
 //   const uint32_t total_elems = this->data_.size();
 //   // CHECK_EQ(values.size(), total_elems);  //检查size相同
 // 	//基本属性
@@ -232,13 +235,13 @@ void Tensor<float>::Fill(float value) {
 
 //!
 void Tensor<float>::Ones() {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   this->Fill(1.0);
 }
 
 //!
 void Tensor<float>::Rand() {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   this->data_.setRandom();
 }
 
@@ -252,7 +255,7 @@ void Tensor<float>::Rand() {
 
 //!
 void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
   
 	const uint32_t origin_size = this->Size();  // 原始大小
@@ -279,7 +282,7 @@ void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
 }
 
 // void Tensor<float>::ReRawView(const std::vector<uint32_t>& shapes) {
-//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
 //   SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
   
 // 	const uint32_t origin_size = this->Size();
@@ -306,13 +309,13 @@ void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
 
 //!
 void Tensor<float>::Flatten() {
-  SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
   const uint32_t size = this->data_.size();
   this->ReRawshape({size});
 }
 
 // void Tensor<float>::Transform(const std::function<float(float)>& filter) {
-//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
 //   this->data_.transform(filter);
 // }
 
@@ -325,7 +328,7 @@ auto Tensor<float>::Clone() -> std::shared_ptr<Tensor<float>> {
 
 
 // void Tensor<float>::Review(const std::vector<uint32_t>& shapes) {
-//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
 //   const uint32_t target_channels = shapes.at(0);
 //   const uint32_t target_rows = shapes.at(1);
 //   const uint32_t target_cols = shapes.at(2);
@@ -351,7 +354,7 @@ auto Tensor<float>::Clone() -> std::shared_ptr<Tensor<float>> {
 // }
 
 // const float* Tensor<float>::raw_ptr() const {
-//   SCNNI_ASSERT(!this->data_.size(), "data_ is empty");
+//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
 //   return this->data_.memptr();
 // }
 

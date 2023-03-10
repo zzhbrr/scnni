@@ -1,18 +1,17 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05 09:56:09
- * @LastEditTime: 2023-03-08 11:00:44
+ * @LastEditTime: 2023-03-08 12:42:07
  * @Description: 
  * @FilePath: /SCNNI/test/test_graph.cpp
  */
 
 #include "scnni/graph.hpp"
-// #include "pnnx/ir.h"
 #include <string>
 #include <gtest/gtest.h>
 #include <iostream>
 
-TEST(GGGGGGG, load_model) {
+TEST(graph_test, load_model) {
     // std::unique_ptr<pnnx::Graph> g = std::make_unique<pnnx::Graph>();
     // g->load("/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.param","/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.bin");
     std::cout << "In graph_test load params" << std::endl;

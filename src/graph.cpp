@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-08 10:09:27
+ * @LastEditTime: 2023-03-10 06:46:31
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -13,6 +13,7 @@
 #include "scnni/macros.h"
 #include "scnni/operator.hpp"
 #include "scnni/store_zip.hpp"
+#include <bits/stdint-uintn.h>
 #include <cstddef>
 #include <exception>
 #include <fstream>
@@ -95,6 +96,9 @@ void LoadShape(const std::shared_ptr<Operator>& op, const std::string& key, cons
     SCNNI_ASSERT(blob != nullptr, "Operator has no corresponding blob");
     if (value.substr(value.find_last_of(')') + 1) != "f32") {
         UNREACHABLE("Blob Type Unsupported");
+    }
+    if (blob->type_ != Blob::BlobType::Unknow) { // blob has shape
+        return ;
     }
     blob->type_ = Blob::BlobType::Float32;
     std::string shape_str = value.substr(1, value.find_last_of(')') - 1);
@@ -249,6 +253,30 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
         }
     }
 
+    for (const auto& blob: blobs_) {
+        // print blob size's
+        LOG_DEBUG("blob %s has shape (%d %d %d %d)", blob->name_.c_str(),
+                  blob->shape_[0], blob->shape_[1], blob->shape_[2],
+                  blob->shape_[3]);
+        std::vector<uint32_t> tensorshape;
+        for (size_t j = 1; j < blob->shape_.size(); j++) {
+          tensorshape.push_back(blob->shape_[j]);
+        }
+        SCNNI_ASSERT(tensorshape.size() <= 3, "tensor dim too large");
+        if (tensorshape.size() == 1) {
+            tensorshape.insert(tensorshape.begin(), 1);
+            tensorshape.insert(tensorshape.begin(), 1);
+        } else if (tensorshape.size() == 2) {
+            tensorshape.insert(tensorshape.begin(), 1);
+        }
+        // std::cout << blob->shape_.size() << std::endl;
+        // std::cout << tensorshape.size() << std::endl;
+        blob->data_.resize(blob->shape_[0]);
+        for (int i = 0; i < blob->shape_[0]; i ++) {
+          blob->data_[i] = std::make_shared<Tensor<float>>(tensorshape);
+        }
+    }
+
     return 1;
 }
 
@@ -266,20 +294,21 @@ Excecutor::Excecutor(std::unique_ptr<Graph> graph) : graph_(std::move(graph)){
 auto Excecutor::Input(const std::string &blob_name, const std::vector<Tensor<float>> &data_in) -> int {
     std::shared_ptr<Blob> blob = graph_->GetBlobByName(blob_name);
     size_t batchsize = data_in.size();
+    SCNNI_ASSERT(batchsize == blob->data_.size(), "Input batchsize uncorrect");
     for (size_t i = 0; i < batchsize; i ++) {
-        // blob[i] = data_in[i]; // 为输入blob赋值
+        *(blob->data_[i]) = data_in[i];
     }
     return 1;
 }
 
 auto Excecutor::Output() -> std::vector<Tensor<float>> {
     std::vector<Tensor<float>> ret;
-    for (const auto& op: outputs_ops_) { // 因为只有一个输出算子，所以只进行一次循环
+    for (const auto& op: outputs_ops_) { // 因为有且只有一个输出算子，所以只进行一次循环
         if (op->state_ != Operator::OpState::Executed) {
             LOG_ERROR("Operator haven't benn executed");
             return ret;
         }
-        for (const auto& input_blob_ptr: op->inputs_) {
+        for (const auto& input_blob_ptr: op->inputs_) { // output算子只有一个输入blob
             for (const auto& one_batch_tensor: input_blob_ptr->data_) {
               Tensor<float> new_tensor = *one_batch_tensor;
               ret.push_back(new_tensor);
@@ -290,6 +319,7 @@ auto Excecutor::Output() -> std::vector<Tensor<float>> {
 }
 
 auto Excecutor::ForwardOp(const std::shared_ptr<Operator> &op) -> int {
+  LOG_DEBUG("ForwardOP: %s", op->name_.c_str());
   if (op->state_ != Operator::OpState::Inited) {
     LOG_ERROR("Operator haven't init");
     return -1;
@@ -301,6 +331,7 @@ auto Excecutor::ForwardOp(const std::shared_ptr<Operator> &op) -> int {
       LOG_ERROR("Op's input data empty");
       return -1;
     }
+    // LOG_DEBUG("load input blob: %s", blob->name_.c_str());
     std::vector<std::shared_ptr<Tensor<float>>> tensors;
     for (const auto &tensor : blob->data_) {
       tensors.push_back(tensor);
@@ -312,12 +343,14 @@ auto Excecutor::ForwardOp(const std::shared_ptr<Operator> &op) -> int {
       LOG_ERROR("Op's output data empty");
       return -1;
     }
+    // LOG_DEBUG("load output blob: %s", blob->name_.c_str());
     std::vector<std::shared_ptr<Tensor<float>>> tensors;
     for (const auto &tensor : blob->data_) {
       tensors.push_back(tensor);
     }
     outputblobs.push_back(tensors);
   }
+  LOG_DEBUG("Ready to forward %s, Inputblobs num: %d, Outputblobs num %d", op->name_.c_str(),  (int)inputblobs.size(), (int)outputblobs.size());
   int ret = op->layer_->Forward(inputblobs, outputblobs);
   op->state_ = Operator::OpState::Executed;
   return ret;
