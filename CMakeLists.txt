@@ -15,8 +15,8 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Find 3rdparty
-# find_package(OpenCV REQUIRED) 
 find_package(Eigen3 REQUIRED)
+
 
 # Add Build library & execuable
 

@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-06 17:28:57
- * @Description: 
- * @FilePath: /scnni/include/scnni/tensor.hpp
+ * @LastEditTime: 2023-03-09 10:05:52
+ * @Description: 由于框架定位为CNN推理框架, 且主要在CPU上推理，特征图tensor的存储的格式定为CHW，卷积核的格式为Cin_Cout_H_W
+ * @FilePath: /SCNNI/include/scnni/tensor.hpp
  */
 
 #ifndef SCNNI_TENSOR_HPP_
@@ -25,7 +25,7 @@ class Tensor {};
 template <>
 class Tensor<float> {
   public:
-    explicit Tensor() = default;
+    explicit Tensor() = delete;
 
     /**
      * @description: 声明构造函数(创建张量)
@@ -35,21 +35,21 @@ class Tensor<float> {
      * @return {*}
      */
     explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols);
-    
+
     /**
      * @description: 初始化shapes
      */
     explicit Tensor(const std::vector<uint32_t>& shapes);
 
     /**
-     * @description: 构造拷贝函数
+     * @description: 构拷贝造函数
      * @param tensor
      * @return {*}
      */
     Tensor(const Tensor& tensor);
     
     /**
-     * @description: 重载=，赋值拷贝函数
+     * @description: 重载=，赋拷贝值函数
      */    
     auto operator=(const Tensor& tensor) -> Tensor<float>&;
 
@@ -58,10 +58,10 @@ class Tensor<float> {
      * @param {Tensor&&} tensor
      * @return {*}
      */   
-    Tensor(Tensor&& tensor) noexcept ;
+    Tensor(Tensor&& tensor) noexcept;
     
     /**
-     * @description: 重载=，赋值移动
+     * @description: 重载=，移动赋值
      */    
     auto operator=(Tensor&& tenson) noexcept -> Tensor<float>&;
 
@@ -73,7 +73,7 @@ class Tensor<float> {
     auto Empty() const -> bool;  //判空，返回张量是否为空
 
     /**
-     * @description: 返回张量展平后，顺序位置（offset位置）的元素中。index(c*Rows*Cols + row*Cols + col) = At(c, row, col)
+     * @description: 返回张量展平后，顺序位置（offset位置）的元素。
      * @param offset 需要访问的位置
      * @return offset位置的元素
      */
@@ -107,14 +107,14 @@ class Tensor<float> {
      * @param channel 需要返回的通道
      * @return 返回的通道
      */
-    auto Slice(uint32_t channel) -> Eigen::MatrixXf&;
+    // auto Slice(uint32_t channel) -> Eigen::MatrixXf&;
 
     /**
      * 返回张量第channel通道中的数据
      * @param channel 需要返回的通道
      * @return 返回的通道
      */
-    auto Slice(uint32_t channel) const -> const Eigen::MatrixXf&;
+    auto Slice(uint32_t channel) const -> Eigen::Tensor<float, 3>;
 
     /**
      * @description: 返回特定位置的元素
@@ -132,7 +132,7 @@ class Tensor<float> {
      * @param col 列数
      * @return 特定位置的元素
      */
-    auto At(uint32_t channel, uint32_t row, uint32_t col) -> float&;
+    auto At(uint32_t channe, uint32_t row, uint32_t coll) -> float&;
 
     /**
      * @description: 填充张量
@@ -168,9 +168,9 @@ class Tensor<float> {
      */
     void Show();
 
-    /// reshape和review的区别
-    /// reshape是满足列优先的
-    /// review是满足行优先的
+    // reshape和review的区别
+    // reshape是满足列主序的
+    // review是满足行主序的
     /**
      * 1 3 4 7
      * review(2,2)  reshape(2,2)
@@ -215,6 +215,8 @@ class Tensor<float> {
   private:
     void Review(const std::vector<uint32_t>& shapes);
     std::vector<uint32_t> raw_shapes_;  // 张量数据的实际尺寸大小
+    // float* raw_data_;
+    // Eigen::TensorMap<Eigen::Tensor<float, 3, Eigen::ColMajor>> data_; // 张量数据
     Eigen::Tensor<float, 3> data_;  // 张量数据
 };
 

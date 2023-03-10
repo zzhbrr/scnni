@@ -1,43 +1,69 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 06:41:48
- * @LastEditTime: 2023-03-06 17:06:32
+ * @LastEditTime: 2023-03-09 15:55:57
  * @Description: 
- * @FilePath: /scnni/test/test_tensor.cpp
+ * @FilePath: /SCNNI/test/test_tensor.cpp
  */
 
 // #include "sccni/tensor.hpp"
 #include <Eigen/Dense>
+#include <Eigen/src/Core/util/Constants.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <gtest/gtest.h>
 #include <iostream>
-
-TEST(test_tensor, test_tensor_1)
-{
-Eigen::Tensor<float, 3> a(1, 2, 3);
-Eigen::Tensor<float, 3> b(1, 2, 3);
-for(int i = 0; i < 2; i++){
-    for(int j = 0; j < 3; j++){
-        a(0, i, j) = i;
-        b(0, i, j) = j;
-    }
-}
 using std::cout;
 using std::endl;
-cout << a << endl;
-cout << b << endl;
-Eigen::Tensor<int , 3> c = (a==b);
-cout << c << endl;
-cout << a.size() << endl;
-cout << (a == b) << endl;
-cout << a.sum() << endl;
-cout << b.sum() << endl;
-cout << (a == b).sum() << endl;
-// std::cout << ((a == b).sum() == a.size()) << std::endl;
-// EXPECT_EQ(a == b, 1);
-// if(a == b)
-//     std::cout << "afdadfsfdsf ";
-// else
-// a.e
-    // std::cout << (a == b);
+
+TEST(test_tensor, simple_tensor)
+{
+  float data[18];
+  Eigen::TensorMap<Eigen::Tensor<float, 3, Eigen::RowMajor>> a(data, 3, 2, 3);
+  Eigen::TensorMap<Eigen::Tensor<float, 3, Eigen::ColMajor>> b(data, 3, 2, 3);
+  for (int i = 0; i < 18; i++) {
+    data[i] = i;
+  }
+  cout << "a:" << endl;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 2; j++) {
+      for (int k = 0; k < 3; k++) {
+        cout << a(i, j, k) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl << endl;;
+  }
+
+  cout << "b:" << endl;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 2; j ++) {
+      for (int k = 0; k < 3; k++) {
+        cout << b(i, j, k) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl << endl;
+  }
+
+  cout << "a.size(): ";
+  cout << a.size() << endl;
+}
+
+TEST(test_tensor, simple_tensor2)
+{
+    Eigen::Tensor<float, 3, Eigen::RowMajor> a(3, 2, 3);
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 2; j++) {
+        for (int k = 0; k < 3; k++) {
+          a(i, j, k) = 1;
+        }
+      }
+    }
+    float& x = a(1, 1, 1);
+    float y = a(1, 1, 1);
+    x = 2;
+    cout << a(1, 1, 1) << endl;
+    y = 3;
+    cout << a(1, 1, 1) << endl;
+    cout << y << endl;
 }

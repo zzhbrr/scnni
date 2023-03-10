@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05
- * @LastEditTime: 2023-03-06 16:11:20
+ * @LastEditTime: 2023-03-09 12:36:58
  * @Description: 
  * @FilePath: /SCNNI/src/operator.cpp
  */
@@ -133,5 +133,8 @@ auto Parameter::GetValueStringArray() -> std::vector<std::string> {
     return sa_;
 }
 
+Operator::~Operator() {
+  delete[] layer_;
+}
 
 } // namespace scnni
