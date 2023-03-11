@@ -268,7 +268,7 @@ void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
 
   if (shapes.size() == 3) {
 		this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
-		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(0), shapes.at(1), shapes.at(2)}};
+		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(1), shapes.at(2), shapes.at(0)}};
 		this->data_ = this->data_.reshape(dim);
   } else if (shapes.size() == 2) {  //为保证data_为三维且列优先, 在0维度设1
     this->raw_shapes_ = {1, shapes.at(0), shapes.at(1)};
@@ -281,32 +281,59 @@ void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
   }
 }
 
-// void Tensor<float>::ReRawView(const std::vector<uint32_t>& shapes) {
-//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-//   SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
+void Tensor<float>::ReView(const std::vector<uint32_t>& shapes) {
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
   
-// 	const uint32_t origin_size = this->Size();
-//   uint32_t current_size = 1;
-//   for (uint32_t s : shapes) {
-//     current_size *= s;
-//   }
-//   SCNNI_ASSERT(shapes.size() <= 3, "shapes.size() > 3");
-//   SCNNI_ASSERT(current_size == origin_size, "Find current_size != origin_size");
+	const uint32_t origin_size = this->Size();
+  uint32_t current_size = 1;
+  for (uint32_t s : shapes) {
+    current_size *= s;
+  }
+  SCNNI_ASSERT(shapes.size() <= 3, "shapes.size() > 3");
+  SCNNI_ASSERT(current_size == origin_size, "Find current_size != origin_size");
 	
-//   std::vector<uint32_t> target_shapes;  // channel row col
-//   if (shapes.size() == 3) {
-//     target_shapes = {shapes.at(0), shapes.at(1), shapes.at(2)};
-//     this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
-//   } else if (shapes.size() == 2) {
-//     target_shapes = {1, shapes.at(0), shapes.at(1)};
-//     this->raw_shapes_ = {shapes.at(0), shapes.at(1)};
-//   } else {
-//     target_shapes = {1, shapes.at(0), 1};
-//     this->raw_shapes_ = {shapes.at(0)};
-//   }
-//   this->ReView(target_shapes);
-// }
+  std::vector<uint32_t> target_shapes;  // channel row col
+  if (shapes.size() == 3) {
+    target_shapes = {shapes.at(0), shapes.at(1), shapes.at(2)};
+    this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
+  } else if (shapes.size() == 2) {
+    target_shapes = {1, shapes.at(0), shapes.at(1)};
+    this->raw_shapes_ = {shapes.at(0), shapes.at(1)};
+  } else {
+    target_shapes = {1, shapes.at(0), 1};
+    this->raw_shapes_ = {shapes.at(0)};
+  }
+  this->ReView(target_shapes);
+}
 
+void Tensor<float>::ReShape(const std::vector<uint32_t> &shapes) {
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
+  
+	const uint32_t origin_size = this->Size();  // 原始大小
+  uint32_t current_size = 1;  //reshape后大小
+  for (uint32_t s : shapes) {
+    current_size *= s;
+  }
+  SCNNI_ASSERT(shapes.size() <= 3, "shapes.size() > 3");
+  SCNNI_ASSERT(current_size == origin_size, "Find current_size != origin_size");
+
+  if (shapes.size() == 3) {
+		this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
+		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(1), shapes.at(2), shapes.at(0)}};
+		this->data_ = this->data_.reshape(dim);
+  } else if (shapes.size() == 2) {  //为保证data_为三维且列优先, 在0维度设1
+    this->raw_shapes_ = {shapes.at(0), shapes.at(1)};
+		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(0), shapes.at(1), 1}};
+		this->data_ = this->data_.reshape(dim);
+  } else {  //为保证data_为三维且列优先, 在0维度和1维度设1
+    this->raw_shapes_ = {shapes.at(0)};
+		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(0), 1, 1}};
+		this->data_ = this->data_.reshape(dim);
+  }
+
+}
 //!
 void Tensor<float>::Flatten() {
   SCNNI_ASSERT(this->data_.size(), "data_ is empty");

@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05 
- * @LastEditTime: 2023-03-09 12:35:52
+ * @LastEditTime: 2023-03-10 13:27:23
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/operator.hpp
  */
@@ -89,6 +89,9 @@ class Operator {
     bool can_forward_inplace_{false};
     // std::unique_ptr<Layer> layer_;
     Layer* layer_;
+
+  public:
+    auto GetParam(const std::string &param_name) -> Parameter;
 };
 } // namespace scnni
 

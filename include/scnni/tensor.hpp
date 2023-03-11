@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-09 10:05:52
+ * @LastEditTime: 2023-03-11 13:35:45
  * @Description: 由于框架定位为CNN推理框架, 且主要在CPU上推理，特征图tensor的存储的格式定为CHW，卷积核的格式为Cin_Cout_H_W
  * @FilePath: /SCNNI/include/scnni/tensor.hpp
  */
@@ -188,7 +188,9 @@ class Tensor<float> {
      * @description: 张量的实际尺寸大小的Reshape pytorch兼容
      * @param shapes 张量的实际尺寸大小
      */
-    void ReRawView(const std::vector<uint32_t>& shapes);
+    void ReView(const std::vector<uint32_t>& shapes);
+
+    void ReShape(const std::vector<uint32_t>& shapes);
 
     /**
      * @description: 展开张量

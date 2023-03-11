@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-10 06:46:31
+ * @LastEditTime: 2023-03-11 15:23:01
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -255,9 +255,9 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
 
     for (const auto& blob: blobs_) {
         // print blob size's
-        LOG_DEBUG("blob %s has shape (%d %d %d %d)", blob->name_.c_str(),
+        LOG_DEBUG("blob %s has shape (%d %d %d %d) with shape length: %ld", blob->name_.c_str(),
                   blob->shape_[0], blob->shape_[1], blob->shape_[2],
-                  blob->shape_[3]);
+                  blob->shape_[3], blob->shape_.size());
         std::vector<uint32_t> tensorshape;
         for (size_t j = 1; j < blob->shape_.size(); j++) {
           tensorshape.push_back(blob->shape_[j]);

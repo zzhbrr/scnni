@@ -1,0 +1,30 @@
+:ó
+0pnnx_input_0"
+pnnx.Input
+
+01relu"nn.ReLU
+K
+12torch.flatten_0"torch.flatten*
+end_dimÿÿÿÿÿÿÿÿÿ*
+	start_dim
+
+2pnnx_output_0"pnnx.Outputj
+0
+
+
+
+
+
+j
+1
+
+
+
+
+
+j
+2
+
+
+
+
