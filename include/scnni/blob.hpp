@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 12:37:46
- * @LastEditTime: 2023-03-06 07:04:29
+ * @LastEditTime: 2023-03-08 06:03:36
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/blob.hpp
  */
@@ -28,7 +28,7 @@ class Blob {
     std::vector<std::shared_ptr<Operator>> consumers_; // 以此 blob 为输入的 layer
 
     std::vector<int> shape_;
-    std::vector<Tensor<float>> data_;
+    std::vector<std::shared_ptr<Tensor<float>>> data_;
 };
 } // namespace scnni
 #endif

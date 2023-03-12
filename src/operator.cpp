@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05
- * @LastEditTime: 2023-03-06 16:11:20
+ * @LastEditTime: 2023-03-10 13:26:46
  * @Description: 
  * @FilePath: /SCNNI/src/operator.cpp
  */
@@ -133,5 +133,15 @@ auto Parameter::GetValueStringArray() -> std::vector<std::string> {
     return sa_;
 }
 
+Operator::~Operator() {
+  delete[] layer_;
+}
 
+auto Operator::GetParam(const std::string &param_name) -> Parameter {
+    auto find_iter = this->params_.find(param_name);
+    if (find_iter == this->params_.end()) {
+      LOG_ERROR("Op [%s] has no param [%s]", this->name_.c_str(), param_name.c_str());
+    }
+    return find_iter->second;
+}
 } // namespace scnni

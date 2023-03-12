@@ -1,0 +1,6 @@
+7767517
+4 4
+Input                    in0                      0 1 in0
+ReLU                     relu_1                   1 1 in0 1
+Pooling                  maxpool2d_0              1 1 1 2 0=0 1=2 11=2 12=2 13=0 2=2 3=0 5=1
+Flatten                  flatten_2                1 1 2 out0

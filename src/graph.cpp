@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-06 15:47:09
+ * @LastEditTime: 2023-03-11 15:23:01
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -13,6 +13,7 @@
 #include "scnni/macros.h"
 #include "scnni/operator.hpp"
 #include "scnni/store_zip.hpp"
+#include <bits/stdint-uintn.h>
 #include <cstddef>
 #include <exception>
 #include <fstream>
@@ -21,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include <queue>
 
 namespace scnni {
 
@@ -95,6 +97,9 @@ void LoadShape(const std::shared_ptr<Operator>& op, const std::string& key, cons
     if (value.substr(value.find_last_of(')') + 1) != "f32") {
         UNREACHABLE("Blob Type Unsupported");
     }
+    if (blob->type_ != Blob::BlobType::Unknow) { // blob has shape
+        return ;
+    }
     blob->type_ = Blob::BlobType::Float32;
     std::string shape_str = value.substr(1, value.find_last_of(')') - 1);
     std::istringstream shape_stream(shape_str);
@@ -111,7 +116,7 @@ void LoadShape(const std::shared_ptr<Operator>& op, const std::string& key, cons
 
 }
 
-auto Graph::GetBlobByName(const std::string &name) -> std::shared_ptr<Blob> {
+auto Graph::GetBlobByName(const std::string &name) const -> std::shared_ptr<Blob> {
     for (const std::shared_ptr<Blob>& b : blobs_) {
         if (b == nullptr) {
             continue;
@@ -197,6 +202,7 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
             op->inputs_.resize(input_blobs_count);
             op->outputs_.resize(output_blobs_count);
             op->inputnames_.resize(input_blobs_count);
+            op->refcnt_ = input_blobs_count;
 
             // read input blobs
             for (int i = 0; i < input_blobs_count; i ++) {
@@ -242,10 +248,139 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
                 }
             }
             ++ loaded_layer_count;
+            op->layer_ = LayerRegister::CreateLayer(op->type_, op);
+            op->state_ = Operator::OpState::Inited;
         }
     }
-    
+
+    for (const auto& blob: blobs_) {
+        // print blob size's
+        LOG_DEBUG("blob %s has shape (%d %d %d %d) with shape length: %ld", blob->name_.c_str(),
+                  blob->shape_[0], blob->shape_[1], blob->shape_[2],
+                  blob->shape_[3], blob->shape_.size());
+        std::vector<uint32_t> tensorshape;
+        for (size_t j = 1; j < blob->shape_.size(); j++) {
+          tensorshape.push_back(blob->shape_[j]);
+        }
+        SCNNI_ASSERT(tensorshape.size() <= 3, "tensor dim too large");
+        if (tensorshape.size() == 1) {
+            tensorshape.insert(tensorshape.begin(), 1);
+            tensorshape.insert(tensorshape.begin(), 1);
+        } else if (tensorshape.size() == 2) {
+            tensorshape.insert(tensorshape.begin(), 1);
+        }
+        // std::cout << blob->shape_.size() << std::endl;
+        // std::cout << tensorshape.size() << std::endl;
+        blob->data_.resize(blob->shape_[0]);
+        for (int i = 0; i < blob->shape_[0]; i ++) {
+          blob->data_[i] = std::make_shared<Tensor<float>>(tensorshape);
+        }
+    }
+
     return 1;
 }
 
-}  // namespace scnni
+Excecutor::Excecutor(std::unique_ptr<Graph> graph) : graph_(std::move(graph)){
+    for (const auto& op : graph_->operators_) {
+        if (op->type_ == "pnnx.Input") {
+            inputs_ops_.push_back(op);
+        }
+        if (op->type_ == "pnnx.Output") {
+            outputs_ops_.push_back(op);
+        }
+    }
+}
+
+auto Excecutor::Input(const std::string &blob_name, const std::vector<Tensor<float>> &data_in) -> int {
+    std::shared_ptr<Blob> blob = graph_->GetBlobByName(blob_name);
+    size_t batchsize = data_in.size();
+    SCNNI_ASSERT(batchsize == blob->data_.size(), "Input batchsize uncorrect");
+    for (size_t i = 0; i < batchsize; i ++) {
+        *(blob->data_[i]) = data_in[i];
+    }
+    return 1;
+}
+
+auto Excecutor::Output() -> std::vector<Tensor<float>> {
+    std::vector<Tensor<float>> ret;
+    for (const auto& op: outputs_ops_) { // 因为有且只有一个输出算子，所以只进行一次循环
+        if (op->state_ != Operator::OpState::Executed) {
+            LOG_ERROR("Operator haven't benn executed");
+            return ret;
+        }
+        for (const auto& input_blob_ptr: op->inputs_) { // output算子只有一个输入blob
+            for (const auto& one_batch_tensor: input_blob_ptr->data_) {
+              Tensor<float> new_tensor = *one_batch_tensor;
+              ret.push_back(new_tensor);
+            }
+        }
+    }
+    return ret;
+}
+
+auto Excecutor::ForwardOp(const std::shared_ptr<Operator> &op) -> int {
+  LOG_DEBUG("ForwardOP: %s", op->name_.c_str());
+  if (op->state_ != Operator::OpState::Inited) {
+    LOG_ERROR("Operator haven't init");
+    return -1;
+  }
+  std::vector<std::vector<std::shared_ptr<Tensor<float>>>> inputblobs;
+  std::vector<std::vector<std::shared_ptr<Tensor<float>>>> outputblobs;
+  for (const auto &blob : op->inputs_) {
+    if (blob->data_.empty()) {
+      LOG_ERROR("Op's input data empty");
+      return -1;
+    }
+    // LOG_DEBUG("load input blob: %s", blob->name_.c_str());
+    std::vector<std::shared_ptr<Tensor<float>>> tensors;
+    for (const auto &tensor : blob->data_) {
+      tensors.push_back(tensor);
+    }
+    inputblobs.push_back(tensors);
+  }
+  for (const auto &blob : op->outputs_) {
+    if (blob->data_.empty()) {
+      LOG_ERROR("Op's output data empty");
+      return -1;
+    }
+    // LOG_DEBUG("load output blob: %s", blob->name_.c_str());
+    std::vector<std::shared_ptr<Tensor<float>>> tensors;
+    for (const auto &tensor : blob->data_) {
+      tensors.push_back(tensor);
+    }
+    outputblobs.push_back(tensors);
+  }
+  LOG_DEBUG("Ready to forward %s, Inputblobs num: %d, Outputblobs num %d", op->name_.c_str(),  (int)inputblobs.size(), (int)outputblobs.size());
+  int ret = op->layer_->Forward(inputblobs, outputblobs);
+  op->state_ = Operator::OpState::Executed;
+  return ret;
+}
+
+auto Excecutor::Forward() -> int {
+    std::queue<std::shared_ptr<Operator>> exe_q;
+    if (inputs_ops_.empty()) {
+        LOG_ERROR("No input operators");
+        return -1;
+    }
+    for (const auto& op: inputs_ops_) {
+        exe_q.push(op);
+    }
+    while(!exe_q.empty()) {
+        const std::shared_ptr<Operator>& op = exe_q.front();
+        exe_q.pop();
+        int ret = ForwardOp(op);
+        if (ret != 0) {
+            LOG_ERROR("Layer forward failed");
+            return ret;
+        }
+        for (const auto& blob: op->outputs_) {
+            for (const auto& nxt_op: blob->consumers_) {
+                if (--nxt_op->refcnt_ == 0) {
+                    exe_q.push(nxt_op);
+                }
+            }
+        }
+    }
+    return 0;
+}
+} // namespace scnni
