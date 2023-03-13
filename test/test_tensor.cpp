@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 06:41:48
- * @LastEditTime: 2023-03-13 10:17:31
+ * @LastEditTime: 2023-03-13 14:15:45
  * @Description: 
  * @FilePath: /SCNNI/test/test_tensor.cpp
  */
@@ -198,4 +198,11 @@ TEST(test_tensor, simple_tensor3)
 
 }
 
-//>>> a = torch.Tensor([[[[1, 2], [3, 4], [5, 6]], [[7, 8], [9, 10], [11, 12]]], [[[12, 13], [14, 15], [16, 17]], [[18, 19], [20, 21], [22, 23]]], [[[24, 25], [26, 27], []], [[], [], []]], [[[], [], []], [[], [], []]]])
+TEST(test_tensor, simple_tensor4) {
+  Eigen::Tensor<float, 2> a(1, 5);
+  Eigen::Tensor<float, 2> b(3, 5);
+  a.setConstant(1);
+  b.setConstant(2);
+  auto c = a * b;
+  cout << c << endl;
+}
