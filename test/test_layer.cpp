@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-11 15:46:56
+ * @Date: 2023-03-04 	
+ * @LastEditTime: 2023-03-13 10:06:23
  * @Description: 
- * @FilePath: /SCNNI/test/test_layer.cpp
+ * @FilePath: /scnni/test/test_layer.cpp
  */
 #include "scnni/graph.hpp"
 #include <gtest/gtest.h>
@@ -15,8 +15,8 @@ using std::endl;
 TEST(layer_test, relu_only_1batch_test) {
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/relu_only_net/relu_only_net.pnnx.param",
-              "/ws/CourseProject/SCNNI/python_scripts/relu_only_net/relu_only_net.pnnx.bin");
+  g->LoadModel("/code/scnni/python_scripts/relu_only_net/relu_only_net.pnnx.param",
+              "/code/scnni/python_scripts/relu_only_net/relu_only_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 2);
   EXPECT_EQ(g->operators_.size(), 3);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -71,11 +71,12 @@ TEST(layer_test, relu_only_1batch_test) {
   // }
   // cout << endl;
 }
+
 TEST(layer_test, relu_flatten_1batch_test) {
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.param",
-              "/ws/CourseProject/SCNNI/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.bin");
+  g->LoadModel("/code/scnni/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.param",
+              "/code/scnni/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 3);
   EXPECT_EQ(g->operators_.size(), 4);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));

@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05
- * @LastEditTime: 2023-03-10 13:26:46
+ * @LastEditTime: 2023-03-13 12:05:26
  * @Description: 
- * @FilePath: /SCNNI/src/operator.cpp
+ * @FilePath: /scnni/src/operator.cpp
  */
 
 #include "scnni/operator.hpp"
@@ -109,12 +109,12 @@ auto Attribute::Get() -> std::vector<T> {
 }
 
 auto Parameter::GetValueInt() -> int {
-  SCNNI_ASSERT(type_ == ParamType::Int, "Param Type Error");
-  return i_;
+    SCNNI_ASSERT(type_ == ParamType::Int, "Param Type Error");
+    return i_;
 }
 auto Parameter::GetValueFloat() -> float {
-  SCNNI_ASSERT(type_ == ParamType::Float, "Param Type Error");
-  return f_;
+    SCNNI_ASSERT(type_ == ParamType::Float, "Param Type Error");
+    return f_;
 }
 auto Parameter::GetValueString() -> std::string {
     SCNNI_ASSERT(type_ == ParamType::String, "Param Type Error");
