@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-11 15:23:01
+ * @LastEditTime: 2023-03-13 08:27:51
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -259,12 +259,12 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
                   blob->shape_[0], blob->shape_[1], blob->shape_[2],
                   blob->shape_[3], blob->shape_.size());
         std::vector<uint32_t> tensorshape;
-        for (size_t j = 1; j < blob->shape_.size(); j++) {
+        for (size_t j = 1; j < blob->shape_.size(); j++) { // 忽略batch维度
           tensorshape.push_back(blob->shape_[j]);
         }
         SCNNI_ASSERT(tensorshape.size() <= 3, "tensor dim too large");
         if (tensorshape.size() == 1) {
-            tensorshape.insert(tensorshape.begin(), 1);
+            tensorshape.push_back(1);
             tensorshape.insert(tensorshape.begin(), 1);
         } else if (tensorshape.size() == 2) {
             tensorshape.insert(tensorshape.begin(), 1);

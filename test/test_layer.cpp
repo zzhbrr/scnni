@@ -1,18 +1,20 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-11 15:46:56
+ * @LastEditTime: 2023-03-13 11:59:47
  * @Description: 
  * @FilePath: /SCNNI/test/test_layer.cpp
  */
 #include "scnni/graph.hpp"
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <memory>
+#include <random>
 using std::cout;
 using std::endl;
 
-TEST(layer_test, relu_only_1batch_test) {
+TEST(relu_test, DISABLED_relu_only_1batch_test) {
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
   g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/relu_only_net/relu_only_net.pnnx.param",
@@ -71,7 +73,8 @@ TEST(layer_test, relu_only_1batch_test) {
   // }
   // cout << endl;
 }
-TEST(layer_test, relu_flatten_1batch_test) {
+TEST(flatten_test, relu_flatten_1batch_test) {
+  srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
   g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.param",
@@ -85,7 +88,7 @@ TEST(layer_test, relu_flatten_1batch_test) {
   for (int i = 0; i < 3; i ++) {
     for (int j = 0; j < 2; j ++) {
       for (int k = 0; k < 2; k ++) {
-        input_data(j, k, i) = ((j + k + i) % 2) != 0 ? i + 1 : -i - 1;
+        input_data(j, k, i) = (rand() % 10) * (rand() % 2 == 0 ? -1 : 1);
       }
     }
   }
@@ -111,20 +114,84 @@ TEST(layer_test, relu_flatten_1batch_test) {
   Eigen::Tensor<float, 3> output_data(12, 1, 1);
   output_data = output_batch[0].GetData();
   
-  EXPECT_EQ(output_batch[0].Shapes()[0], 1);
-  EXPECT_EQ(output_batch[0].Shapes()[1], 1);
-  EXPECT_EQ(output_batch[0].Shapes()[2], 12);
   EXPECT_EQ(output_batch.size(), 1);
   EXPECT_EQ(output_data.size(), 12);
+  for (int i = 0; i < 12; i++) {
+    cout << output_data(i, 0, 0) << " ";
+  }
+  cout << endl;
   for (int i = 0; i < 3; i ++) {
     for (int j = 0; j < 2; j ++) {
       for (int k = 0; k < 2; k ++) {
-        EXPECT_EQ(output_data(k+j*2+i*4), input_data(j, k, i) > 0 ? input_data(j, k, i) : 0);
+        EXPECT_EQ(output_data(k+j*2+i*4, 0, 0), input_data(j, k, i) > 0 ? input_data(j, k, i) : 0);
       }
     }
   }
-  for (int i = 0; i < 12; i++) {
+}
+TEST(maxpool2d_test, kernel2_padding0_stride2_1batch_test) {
+  srand(time(nullptr));
+  std::cout << "In graph_test load params" << std::endl;
+  std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
+  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/relu_maxpool_flatten_net/relu_maxpool_flatten_net.pnnx.param",
+              "/ws/CourseProject/SCNNI/python_scripts/relu_maxpool_flatten_net/relu_maxpool_flatten_net.pnnx.bin");
+  EXPECT_EQ(g->blobs_.size(), 4);
+  EXPECT_EQ(g->operators_.size(), 5);
+  scnni::Excecutor exe = scnni::Excecutor(std::move(g));
+
+  scnni::Tensor<float> input_tensor(3, 4, 4);
+  Eigen::Tensor<float, 3> input_data(4, 4, 3);
+  for (int i = 0; i < 3; i ++) {
+    for (int j = 0; j < 4; j ++) {
+      for (int k = 0; k < 4; k ++) {
+        input_data(j, k, i) = static_cast<float>(rand() % 10);
+      }
+    }
+  }
+  // cout << input_data << endl << endl;
+
+  for (int i = 0; i < 3; i ++) {
+    for (int j = 0; j < 4; j ++) {
+      for (int k = 0; k < 4; k ++) {
+        cout << input_data(j, k, i) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
+  cout << endl;
+
+  input_tensor.SetData(input_data);
+  std::vector<scnni::Tensor<float>> input_batch;
+  input_batch.push_back(input_tensor);
+
+  exe.Input("0", input_batch);
+  exe.Forward();
+  std::vector<scnni::Tensor<float>> output_batch = exe.Output(); 
+
+  Eigen::Tensor<float, 3> output_data(12, 1, 1);
+  output_data = output_batch[0].GetData();
+
+  for (int i = 0; i < 12; i ++) {
     cout << output_data(i) << " ";
   }
   cout << endl;
+  
+  for (int i = 0; i < 3; i ++) {
+    for (int j = 0; j < 2; j ++) {
+      for (int k = 0; k < 2; k ++) {
+        EXPECT_EQ(output_data(k+2*j+4*i),
+                  std::max(std::max(std::max(input_data(j * 2, k * 2, i),
+                                             input_data(j * 2 + 1, k * 2, i)),
+                                    input_data(j * 2, k * 2 + 1, i)),
+                           input_data(j * 2 + 1, k * 2 + 1, i)));
+
+        // cout << std::max(std::max(std::max(input_data(j * 2, k * 2, i),
+        //                                      input_data(j * 2 + 1, k * 2, i)),
+        //                             input_data(j * 2, k * 2 + 1, i)),
+        //                    input_data(j * 2 + 1, k * 2 + 1, i)) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
 }

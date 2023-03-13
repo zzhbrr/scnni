@@ -4,16 +4,21 @@
 
 #include "scnni/tensor.hpp"
 #include "scnni/macros.h"
+#include "scnni/logger.hpp"
+#include <Eigen/src/Core/util/Constants.h>
+#include <bits/stdint-uintn.h>
 #include <memory>
 #include <cmath>
+#include <iostream>
+#include <unsupported/Eigen/CXX11/src/util/EmulateArray.h>
 
 namespace scnni {
 
 //!
 Tensor<float>::Tensor(uint32_t channels, uint32_t rows, uint32_t cols) {
   data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
-  if (channels == 1 && rows == 1) {
-    this->raw_shapes_ = std::vector<uint32_t>{cols};
+  if (channels == 1 && cols == 1) {
+    this->raw_shapes_ = std::vector<uint32_t>{rows};
   } else if (channels == 1) {
     this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
   } else {
@@ -29,8 +34,8 @@ Tensor<float>::Tensor(const std::vector<uint32_t>& shapes) {
   uint32_t cols = shapes.at(2);
 
   data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
-  if (channels == 1 && rows == 1) {
-    this->raw_shapes_ = std::vector<uint32_t>{cols};
+  if (channels == 1 && cols == 1) {
+    this->raw_shapes_ = std::vector<uint32_t>{rows};
   } else if (channels == 1) {
     this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
   } else {
@@ -131,7 +136,7 @@ auto Tensor<float>::Shapes() const -> std::vector<uint32_t> {
 
 //!
 auto Tensor<float>::RawShapes() const -> const std::vector<uint32_t>& {
-  SCNNI_ASSERT(this->raw_shapes_.empty(),  "raw_shapes_ is empty");
+  SCNNI_ASSERT(!this->raw_shapes_.empty(),  "raw_shapes_ is empty");
   return this->raw_shapes_;
 }
 
@@ -189,24 +194,43 @@ auto Tensor<float>::At(uint32_t channel, uint32_t row, uint32_t col) -> float& {
   return this->data_(row, col, channel);
 }
 
-// void Tensor<float>::Padding(const std::vector<uint32_t>& pads, float padding_value) {
-//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-//   CHECK_EQ(pads.size(), 4);
-//   uint32_t pad_rows1 = pads.at(0);  // up
-//   uint32_t pad_rows2 = pads.at(1);  // bottom
-//   uint32_t pad_cols1 = pads.at(2);  // left
-//   uint32_t pad_cols2 = pads.at(3);  // right
+void Tensor<float>::Padding(const std::vector<uint32_t>& pads, float padding_value) {
+  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+  SCNNI_ASSERT(pads.size() == 4, "Padding: pads size != 4");
+  uint32_t pad_rows1 = pads.at(0);  // up
+  uint32_t pad_rows2 = pads.at(1);  // bottom
+  uint32_t pad_cols1 = pads.at(2);  // left
+  uint32_t pad_cols2 = pads.at(3);  // right
 
-//   Eigen::Tensor<float, 3> new_data(this->data_.dimensions()[1] + pad_rows1 + pad_rows2,
-//                       this->data_.dimensions()[2] + pad_cols1 + pad_cols2,
-//                       this->data_.dimensions()[0]);
-//   new_data.fill(padding_value);
+  Eigen::Tensor<float, 3> new_data(this->data_.dimensions()[0] + pad_rows1 + pad_rows2,
+                      this->data_.dimensions()[1] + pad_cols1 + pad_cols2,
+                      this->data_.dimensions()[2]);
+  raw_shapes_[0] = new_data.dimensions()[2];
+  raw_shapes_[1] = new_data.dimensions()[0];
+  raw_shapes_[2] = new_data.dimensions()[1];
 
-//   new_data.subcube(pad_rows1, pad_cols1, 0, new_data.dimensions()[1] - pad_rows2 - 1,
-//                     new_data.dimensions()[2] - pad_cols2 - 1, new_data.dimensions()[0] - 1) =
-//       this->data_;
-//   this->data_ = std::move(new_data);
-// }
+  new_data.setConstant(padding_value);
+
+  for (int c = 0; c < this->data_.dimensions()[2]; c ++) {
+    for (int i = pad_rows1; i < pad_rows1 + this->data_.dimensions()[0]; i++) {
+      for (int j = pad_cols1; j < pad_cols1 + this->data_.dimensions()[1]; j ++) {
+        new_data(i, j, c) = this->data_(i-pad_rows1, j-pad_cols1, c);
+      }
+    }
+  }
+
+  // this->data_ = this->data_ + this->data_.setConstant(-padding_value);
+
+  // Eigen::array<std::pair<int, int>, 3> paddings;
+  // paddings[0] = std::make_pair(pad_cols1, pad_cols2);
+  // paddings[1] = std::make_pair(pad_rows1, pad_rows2);
+  // paddings[2] = std::make_pair(0, 0);
+  // Eigen::Tensor<float, 3> data_padding0 = this->data_.pad(paddings);
+  
+  // new_data = data_padding0.constant(padding_value) + data_padding0;
+
+  this->data_ = new_data;
+}
 
 //!
 void Tensor<float>::Fill(float value) {
@@ -246,12 +270,17 @@ void Tensor<float>::Rand() {
 }
 
 // //!
-// void Tensor<float>::Show() {
-//   for(uint32_t i = 0; i < this->Channels(); ++i) {
-//     LOG(INFO) << "Channel: " << i;
-//     LOG(INFO) << "\n" << this->data_.Slice(i);
-//   }
-// }
+void Tensor<float>::Show() {
+  for (uint32_t c = 0; c < this->Channels(); c ++) {
+    for (uint32_t i = 0; i < this->Rows(); i ++) {
+      for (uint32_t j = 0; j < this->Cols(); j ++) {
+        std::cout << this->data_(i, j, c) << " ";
+      }
+      std::cout << std::endl;
+    }
+    std::cout << std::endl;
+  }
+}
 
 //!
 void Tensor<float>::ReRawshape(const std::vector<uint32_t>& shapes) {
@@ -318,21 +347,55 @@ void Tensor<float>::ReShape(const std::vector<uint32_t> &shapes) {
   }
   SCNNI_ASSERT(shapes.size() <= 3, "shapes.size() > 3");
   SCNNI_ASSERT(current_size == origin_size, "Find current_size != origin_size");
+  Eigen::array<Eigen::DenseIndex, 3> dim;
 
   if (shapes.size() == 3) {
 		this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
-		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(1), shapes.at(2), shapes.at(0)}};
-		this->data_ = this->data_.reshape(dim);
+		 dim = {{shapes.at(1), shapes.at(2), shapes.at(0)}};
+		// Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(1), shapes.at(2), shapes.at(0)});
+		// this->data_ = this->data_.reshape(dim);
+		// this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
+    // this->data_ = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // Eigen::Tensor<float, 3> new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // this->data_ = new_data;
   } else if (shapes.size() == 2) {  //为保证data_为三维且列优先, 在0维度设1
     this->raw_shapes_ = {shapes.at(0), shapes.at(1)};
-		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(0), shapes.at(1), 1}};
-		this->data_ = this->data_.reshape(dim);
+		dim = {{shapes.at(0), shapes.at(1), 1}};
+		// Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(0), shapes.at(1), 1});
+		// this->data_ = this->data_.reshape(dim);
+		// this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
+    // this->data_ = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // Eigen::Tensor<float, 3> new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // this->data_ = new_data;
   } else {  //为保证data_为三维且列优先, 在0维度和1维度设1
     this->raw_shapes_ = {shapes.at(0)};
-		Eigen::array<Eigen::DenseIndex, 3> dim = {{shapes.at(0), 1, 1}};
-		this->data_ = this->data_.reshape(dim);
+		dim = {{shapes.at(0), 1, 1}};
+		// Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(0), 1, 1});
+		// this->data_ = this->data_.reshape(dim);
+		// this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
+    // this->data_ = this->data_.shuffle(Eigen::array<int, 3>{2, 0, 1}).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).shuffle(Eigen::array<int, 3>{1, 2, 0});
+    // Eigen::Tensor<float, 3> new_data = (this->data_).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+    // this->data_ = new_data;
   }
-
+  auto *row_major_data = new float[this->data_.size()];
+  for (int c = 0; c < this->data_.dimension(2); c++) {
+    for (int h = 0; h < this->data_.dimension(0); h++) {
+      for (int w = 0; w < this->data_.dimension(1); w++) {
+        row_major_data[w + h * this->data_.dimension(1) + c * this->data_.dimension(0) * this->data_.dimension(1)] = this->data_(h, w, c);
+      }
+    }
+  }
+  this->data_ = Eigen::Tensor<float, 3>(dim[0], dim[1], dim[2]);
+  for (int c = 0; c < this->data_.dimension(2); c++) {
+    for (int h = 0; h < this->data_.dimension(0); h++) {
+      for (int w = 0; w < this->data_.dimension(1); w++) {
+        this->data_(h, w, c) = row_major_data[w + h * this->data_.dimension(1) + c * this->data_.dimension(0) * this->data_.dimension(1)];
+      }
+    }
+  }
 }
 //!
 void Tensor<float>::Flatten() {
