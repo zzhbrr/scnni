@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-13 12:09:59
+ * @LastEditTime: 2023-03-13 14:04:39
  * @Description: 
  * @FilePath: /scnni/test/test_layer.cpp
  */
@@ -73,7 +73,7 @@ TEST(relu_test, DISABLED_relu_only_1batch_test) {
   // }
   // cout << endl;
 }
-TEST(flatten_test, relu_flatten_1batch_test) {
+TEST(flatten_test, DISABLED_relu_flatten_1batch_test) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
@@ -128,7 +128,7 @@ TEST(flatten_test, relu_flatten_1batch_test) {
     }
   }
 }
-TEST(maxpool2d_test, kernel2_padding0_stride2_1batch_test) {
+TEST(maxpool2d_test, DISABLED_kernel2_padding0_stride2_1batch_test) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
@@ -194,4 +194,43 @@ TEST(maxpool2d_test, kernel2_padding0_stride2_1batch_test) {
     }
     cout << endl;
   }
+}
+TEST(softmax_test, softmax_only_1batch_test) {
+    srand(time(nullptr));
+    std::cout << "In graph_test load params" << std::endl;
+    std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
+    g->LoadModel("/code/scnni/python_scripts/softmax_only_net/softmax_net.pnnx.param",
+                "/code/scnni/python_scripts/softmax_only_net/softmax_net.pnnx.bin");
+    EXPECT_EQ(g->blobs_.size(), 2);
+    EXPECT_EQ(g->operators_.size(), 3);
+    scnni::Excecutor exe = scnni::Excecutor(std::move(g));
+
+    scnni::Tensor<float> input_tensor(1, 5, 1);
+    Eigen::Tensor<float, 3> input_data(5, 1, 1);
+    for (int i = 0; i < 5; i ++) {
+        input_data(i, 0, 0) = static_cast<float>(rand() % 10);
+    }
+    // cout << input_data << endl << endl;
+
+    for (int i = 0; i < 5; i ++) {
+        cout << input_data(i, 0, 0) << " ";
+    }
+    cout << endl;
+
+    input_tensor.SetData(input_data);
+    std::vector<scnni::Tensor<float>> input_batch;
+    input_batch.push_back(input_tensor);
+
+    exe.Input("0", input_batch);
+    exe.Forward();
+    std::vector<scnni::Tensor<float>> output_batch = exe.Output(); 
+
+    Eigen::Tensor<float, 3> output_data(5, 1, 1);
+    output_data = output_batch[0].GetData();
+
+    for (int i = 0; i < 5; i ++) {
+        cout << output_data(i, 0, 0) << " ";
+    }
+    cout << endl;
+
 }

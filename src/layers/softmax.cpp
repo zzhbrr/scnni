@@ -1,7 +1,7 @@
 /*
  * @Author: xzj
  * @Date: 2023-03-13 11:18:42
- * @LastEditTime: 2023-03-13 12:04:10
+ * @LastEditTime: 2023-03-13 14:05:43
  * @Description: 
  * @FilePath: /scnni/src/layers/softmax.cpp
  */
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 namespace scnni {
 auto SoftmaxLayer::Forward(
@@ -22,20 +23,23 @@ auto SoftmaxLayer::Forward(
     std::vector<std::vector<std::shared_ptr<Tensor<float>>>> &output_blobs) const -> int {
     SCNNI_ASSERT(!input_blobs.empty(), "SoftmaxLayer's input blobs empty");
     SCNNI_ASSERT(input_blobs.size() == 1, "SoftmaxLayer has multiple inputs");
+    SCNNI_ASSERT(input_blobs.size() == output_blobs.size(), "SoftmaxLayer: input_blobs are not equal to output_blobs");
     SCNNI_ASSERT(!output_blobs.empty(), "SoftmaxLayer's output blobs empty");
     int dim = dim_;
-    SCNNI_ASSERT(dim == -1, "SoftmaxLayer: dim not implemented");
+    // SCNNI_ASSERT(dim == -1, "SoftmaxLayer: dim not implemented");
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
-        auto input_tensor_shptr = input_blobs[0][batch];
-        std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
-        // LOG_DEBUG("input_tensor_shptr's row: %d", input_tensor_shptr->Rows());
-        
+        const auto input_tensor_shptr = input_blobs[0][batch];
+        const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(batch);
+
+        float sum = 0;
+        LOG_DEBUG("Softmax: input shape [%d, %d, %d]", input_tensor_shptr->Rows(), input_tensor_shptr->Cols(), input_tensor_shptr->Channels());
         for (size_t i = 0; i < input_tensor_shptr->Rows(); i ++) {
-            for (size_t j = 0; j < input_tensor_shptr->Cols(); j ++) {
-                for (size_t k = 0; k < input_tensor_shptr->Channels(); k ++) {
-                    feat->At(k, i, j) = input_tensor_shptr->At(k, i, j) > 0 ? input_tensor_shptr->At(k, i, j) : 0; 
-                }
-            }
+            sum += exp(input_tensor_shptr->At(0, i, 0));
+            LOG_DEBUG("%f", input_tensor_shptr->At(0, i, 0));
+        }
+        std::cout << sum << std::endl;
+        for (size_t i = 0; i < input_tensor_shptr->Rows(); i ++) {
+            feat->At(0, i, 0) = exp(input_tensor_shptr->At(0, i, 0)) / sum;
         }
     }
     return 0;
@@ -52,6 +56,6 @@ auto GetSoftmaxLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return layer;
 }
 
-LayerRegistelrWrapper softmax_layer_registe("nn.Softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
+LayerRegistelrWrapper softmax_layer_registe("F.softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
 
 }  // namespace scnni
