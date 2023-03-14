@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-13 12:28:42
- * @LastEditTime: 2023-03-14 12:27:54
+ * @LastEditTime: 2023-03-14 13:35:41
  * @Description: 
- * @FilePath: /SCNNI/src/layers/linear.cpp
+ * @FilePath: /scnni/src/layers/linear.cpp
  */
 #include "scnni/layers/linear.hpp"
 #include "scnni/layer_factory.hpp"
@@ -29,7 +29,7 @@ auto LinearLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<f
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
-         
+        
         auto in_shape = input_tensor_shptr->Shapes();
 
         if (in_shape[0] == 1 && in_shape[2] == 1) { // channel = 0, cols = 0, only has one dimension
