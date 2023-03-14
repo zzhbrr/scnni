@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 08:53:12
- * @LastEditTime: 2023-03-13 08:41:42
+ * @LastEditTime: 2023-03-13 15:15:41
  * @Description: 
- * @FilePath: /scnni/include/scnni/layer_factory.hpp
+ * @FilePath: /SCNNI/include/scnni/layer_factory.hpp
  */
 #ifndef SCNNI_LAYER_FACTORY_HPP_
 #define SCNNI_LAYER_FACTORY_HPP_
@@ -47,7 +47,6 @@ class LayerRegister {
                 const layer_creator_function& creator);
 };
 
-// 封装注册的Layer
 class LayerRegistelrWrapper{
 	public:
         LayerRegistelrWrapper(

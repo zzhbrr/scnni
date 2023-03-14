@@ -1,7 +1,7 @@
 '''
 Author: zzh
 Date: 2023-03-13
-LastEditTime: 2023-03-13 12:53:46
+LastEditTime: 2023-03-14 12:25:19
 Description: 
 FilePath: /SCNNI/python_scripts/linear_net/linear_net.py
 '''
@@ -18,12 +18,15 @@ class TestNet(nn.Module):
 
 if __name__ == '__main__':
     net = TestNet()
+    state_dict = torch.load('linear_net.pkl')
+    net.load_state_dict(state_dict)
     net.eval()
-    x = torch.rand(1, 10, 5)
+    x = torch.range(0, 4)
     y = net(x)
-    print(y.shape)
+    print(y)
     for name,parameters in net.named_parameters():
         print(name,':',parameters)
+    # torch.save(net.state_dict(), "linear_net.pkl")
     # with torch.no_grad():
     #     mod = torch.jit.trace(net, x)
     #     mod.save("linear_net.pt")

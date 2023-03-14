@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-09 12:50:07
+ * @LastEditTime: 2023-03-13 15:15:58
  * @Description: 
  * @FilePath: /SCNNI/src/layer_factory.cpp
  */
@@ -19,12 +19,6 @@ auto LayerRegister::GetRegistry() -> LayerRegister::Registry & {
     return *k_registry;
 }
 
-// void LayerRegister::RegistLayer(const std::string &layer_type, const layer_creator_func &creator) {
-//     SCNNI_ASSERT(creator != nullptr, "");
-//     Registry &registry = GetRegistry();
-//     SCNNI_ASSERT(registry.count(layer_type), "Layer has been registered");
-//     registry.insert({layer_type, creator});
-// }
 void LayerRegister::RegistLayer(const std::string &layer_type, const layer_creator_function& creator) {
     LOG_DEBUG("Regist layer %s", layer_type.c_str());
     SCNNI_ASSERT(creator, "Layer creator is empty");

@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05 
- * @LastEditTime: 2023-03-10 13:27:23
+ * @LastEditTime: 2023-03-13 17:11:50
  * @Description: 
  * @FilePath: /SCNNI/include/scnni/operator.hpp
  */
@@ -59,13 +59,14 @@ class Attribute {
     std::vector<char> weight_; 
     std::vector<int> shape_;
 
-  /**
-   * 从节点中加载权重参数
-   * @tparam T 权重类型
-   * @return 权重参数数组
-   */
-  template<class T> 
-  auto Get() -> std::vector<T>;
+  // /**
+  //  * 从节点中加载权重参数
+  //  * @tparam T 权重类型
+  //  * @return 权重参数数组
+  //  */
+  // template<typename T> 
+  // auto Get() const -> std::vector<T>;
+    auto Get() const -> std::vector<float>;
 };
 
 
@@ -92,6 +93,7 @@ class Operator {
 
   public:
     auto GetParam(const std::string &param_name) -> Parameter;
+    auto GetAttr(const std::string &attr_name) -> Attribute;
 };
 } // namespace scnni
 
