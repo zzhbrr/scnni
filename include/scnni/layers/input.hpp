@@ -1,7 +1,5 @@
 /*
  * @Author: xzj
- * @Date: 2023-03-06 12:11:58
- * @LastEditTime: 2023-03-13 11:25:18
  * @Description: 
  * @FilePath: /scnni/include/scnni/layers/input.hpp
  */

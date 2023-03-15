@@ -1,7 +1,5 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-15 03:12:15
  * @Description: 
  * @FilePath: /scnni/test/test_layer.cpp
  */
@@ -14,18 +12,17 @@
 using std::cout;
 using std::endl;
 
-/*
-xzj path: /code/scnni/...
-zzh path: /ws/CourseProject/SCNNI/...
-*/ 
+// xzj_path = ../...
+// zzh_path = ../...
+
 
 
 
 TEST(relu_test, DISABLED_relu_only_1batch_test) {
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/code/scnni/python_scripts/relu_only_net/relu_only_net.pnnx.param",
-              "/code/scnni/python_scripts/relu_only_net/relu_only_net.pnnx.bin");
+  g->LoadModel("../python_scripts/relu_only_net/relu_only_net.pnnx.param",
+              "../python_scripts/relu_only_net/relu_only_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 2);
   EXPECT_EQ(g->operators_.size(), 3);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -85,8 +82,8 @@ TEST(flatten_test, DISABLED_relu_flatten_1batch_test) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/code/scnni/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.param",
-              "/code/scnni/python_scripts/relu_flatten_net/relu_flatten_net.pnnx.bin");
+  g->LoadModel("../python_scripts/relu_flatten_net/relu_flatten_net.pnnx.param",
+              "../python_scripts/relu_flatten_net/relu_flatten_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 3);
   EXPECT_EQ(g->operators_.size(), 4);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -141,8 +138,8 @@ TEST(maxpool2d_test, DISABLED_kernel2_padding0_stride2_1batch_test) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/relu_maxpool_flatten_net/relu_maxpool_flatten_net.pnnx.param",
-              "/ws/CourseProject/SCNNI/python_scripts/relu_maxpool_flatten_net/relu_maxpool_flatten_net.pnnx.bin");
+  g->LoadModel("../python_scripts/relu_maxpool_flatten_net/relu_maxpool_flatten_net.pnnx.param",
+              "../python_scripts/relu_maxpool_flatten_net/relu_maxpool_flatten_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 4);
   EXPECT_EQ(g->operators_.size(), 5);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -205,16 +202,12 @@ TEST(maxpool2d_test, DISABLED_kernel2_padding0_stride2_1batch_test) {
   }
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 8ee198fbdcc157ee66e10a2f704c0660916dda31
 TEST(softmax_test, DISABLED_softmax_only_1batch_test) {
     srand(time(nullptr));
     std::cout << "In graph_test load params" << std::endl;
     std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-    g->LoadModel("/code/scnni/python_scripts/softmax_only_net/softmax_net.pnnx.param",
-                "/code/scnni/python_scripts/softmax_only_net/softmax_net.pnnx.bin");
+    g->LoadModel("../python_scripts/softmax_only_net/softmax_net.pnnx.param",
+                "../python_scripts/softmax_only_net/softmax_net.pnnx.bin");
     EXPECT_EQ(g->blobs_.size(), 2);
     EXPECT_EQ(g->operators_.size(), 3);
     scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -248,12 +241,13 @@ TEST(softmax_test, DISABLED_softmax_only_1batch_test) {
     cout << endl;
 
 }
+
 TEST(linear_test, DISABLED_infeat5_outfeat3_input1x5_1batch_test) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/linear_net/linear_net.pnnx.param",
-              "/ws/CourseProject/SCNNI/python_scripts/linear_net/linear_net.pnnx.bin");
+  g->LoadModel("../python_scripts/linear_net/linear_net.pnnx.param",
+              "../python_scripts/linear_net/linear_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 2);
   EXPECT_EQ(g->operators_.size(), 3);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -287,8 +281,8 @@ TEST(combine_test, DISABLED_input3x4x4_output12x1_test) {
     srand(time(nullptr));
     std::cout << "In graph_test load params" << std::endl;
     std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-    g->LoadModel("/code/scnni/python_scripts/relu_maxpool_flatten_linear_softmax_net/relu_maxpool_flatten_linear_softmax_net.pnnx.param",
-                "/code/scnni/python_scripts/relu_maxpool_flatten_linear_softmax_net/relu_maxpool_flatten_linear_softmax_net.pnnx.bin");
+    g->LoadModel("../python_scripts/relu_maxpool_flatten_linear_softmax_net/relu_maxpool_flatten_linear_softmax_net.pnnx.param",
+                "../python_scripts/relu_maxpool_flatten_linear_softmax_net/relu_maxpool_flatten_linear_softmax_net.pnnx.bin");
     EXPECT_EQ(g->blobs_.size(), 6);
     EXPECT_EQ(g->operators_.size(), 7);
     scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -339,12 +333,13 @@ TEST(combine_test, DISABLED_input3x4x4_output12x1_test) {
 
 
 }
+
 TEST(conv2d_test, DISABLED_conv2d_test1) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/covn2d_net/conv2d_test1/conv2d_test1.pnnx.param",
-              "/ws/CourseProject/SCNNI/python_scripts/covn2d_net/conv2d_test1/conv2d_test1.pnnx.bin");
+  g->LoadModel("../python_scripts/covn2d_net/conv2d_test1/conv2d_test1.pnnx.param",
+              "../python_scripts/covn2d_net/conv2d_test1/conv2d_test1.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 2);
   EXPECT_EQ(g->operators_.size(), 3);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
@@ -397,29 +392,26 @@ TEST(conv2d_test, DISABLED_conv2d_test1) {
 
   
 }
+
 TEST(demo_test, demo_test_1) {
-  srand(time(nullptr));
-  std::cout << "In graph_test load params" << std::endl;
-  std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.param",
-              "/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.bin");
-  EXPECT_EQ(g->blobs_.size(), 12);
-  EXPECT_EQ(g->operators_.size(), 13);
-  scnni::Excecutor exe = scnni::Excecutor(std::move(g));
+    srand(time(nullptr));
+    std::cout << "In graph_test load params" << std::endl;
+    std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
+    g->LoadModel("../demo_net/demo_net.pnnx.param",
+                "../demo_net/demo_net.pnnx.bin");
+    EXPECT_EQ(g->blobs_.size(), 12);
+    EXPECT_EQ(g->operators_.size(), 13);
+    scnni::Excecutor exe = scnni::Excecutor(std::move(g));
 
-  scnni::Tensor<float> input_tensor;
-  input_tensor.FromImage("/ws/CourseProject/SCNNI/demo_net/examples/abstract_face.jpg", true);
+    scnni::Tensor<float> input_tensor;
+    input_tensor.FromImage("../demo_net/examples/abstract_face.jpg", true);
 
-  //input_tensor.Show();
+    std::vector<scnni::Tensor<float>> input_batch;
+    input_batch.push_back(input_tensor);
 
-  std::vector<scnni::Tensor<float>> input_batch;
-  input_batch.push_back(input_tensor);
+    exe.Input("0", input_batch);
+    exe.Forward();
+    std::vector<scnni::Tensor<float>> output_batch = exe.Output(); 
 
-  exe.Input("0", input_batch);
-  exe.Forward();
-  std::vector<scnni::Tensor<float>> output_batch = exe.Output(); 
-
-  output_batch.at(0).Show();
-
-  
+    output_batch.at(0).Show();
 }

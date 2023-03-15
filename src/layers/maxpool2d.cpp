@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-12 
- * @LastEditTime: 2023-03-15 07:38:14
  * @Description: 
- * @FilePath: /SCNNI/src/layers/maxpool2d.cpp
+ * @FilePath: /scnni/src/layers/maxpool2d.cpp
  */
 
 #include "scnni/layers/maxpool2d.hpp"

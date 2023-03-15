@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-13 12:28:42
- * @LastEditTime: 2023-03-15 07:39:53
  * @Description: 
- * @FilePath: /SCNNI/src/layers/linear.cpp
+ * @FilePath: /scnni/src/layers/linear.cpp
  */
 #include "scnni/layers/linear.hpp"
 #include "scnni/layer_factory.hpp"
@@ -28,7 +26,7 @@ auto LinearLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<f
     // LOG_DEBUG("FlattenLayer forward: start_dim: %d, end_dim: %d", start_dim_, end_dim_);
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
-        const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
+        const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(batch);
         
         auto in_shape = input_tensor_shptr->Shapes();
 
@@ -37,14 +35,13 @@ auto LinearLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<f
             for (uint32_t k = 0; k < feat->Rows(); k ++) {
                 feat->At(0, k, 0) = 0;
                 for (uint32_t i = 0; i < in_shape[1]; i ++) {
-                  feat->At(0, k, 0) +=
-                      weights_->At(0, k, i) * input_tensor_shptr->At(0, i, 0);
-                }
+                    feat->At(0, k, 0) += weights_->At(0, k, i) * input_tensor_shptr->At(0, i, 0);
+                }//c, h, w
             }
             if (bias_) {
-              for (uint32_t k = 0; k < feat->Rows(); k++) {
-                feat->At(0, k, 0) += bias_v_->At(0, k, 0);
-              }
+                for (uint32_t k = 0; k < feat->Rows(); k++) {
+                    feat->At(0, k, 0) += bias_v_->At(0, k, 0);
+                }
             }
         } else {
             UNREACHABLE("LinearLayer input has more than one dimensions, but not implemented");

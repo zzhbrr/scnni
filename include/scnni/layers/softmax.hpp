@@ -1,7 +1,5 @@
 /*
  * @Author: xzj
- * @Date: 2023-03-13 11:17:56
- * @LastEditTime: 2023-03-13 11:59:09
  * @Description: 
  * @FilePath: /scnni/include/scnni/layers/softmax.hpp
  */

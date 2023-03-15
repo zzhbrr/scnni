@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-08 09:57:05
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/graph.hpp
+ * @FilePath: /scnni/include/scnni/graph.hpp
  */
 #ifndef SCNNI_GRAPH_HPP_
 #define SCNNI_GRAPH_HPP_

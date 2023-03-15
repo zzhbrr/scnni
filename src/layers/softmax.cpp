@@ -1,9 +1,7 @@
 /*
  * @Author: xzj
- * @Date: 2023-03-13 
- * @LastEditTime: 2023-03-15 07:40:25
  * @Description: 
- * @FilePath: /SCNNI/src/layers/softmax.cpp
+ * @FilePath: /scnni/src/layers/softmax.cpp
  */
 #include "scnni/layer_factory.hpp"
 #include "scnni/tensor.hpp"

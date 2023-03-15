@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04
- * @LastEditTime: 2023-03-13 15:15:58
  * @Description: 
- * @FilePath: /SCNNI/src/layer_factory.cpp
+ * @FilePath: /scnni/src/layer_factory.cpp
  */
 #include "scnni/layer_factory.hpp"
 #include "scnni/macros.h"

@@ -244,24 +244,6 @@ void Tensor<float>::Fill(float value) {
   this->data_.setConstant(value);
 }
 
-//!
-// void Tensor<float>::Fill(const std::vector<float>& values) {
-//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-//   const uint32_t total_elems = this->data_.size();
-//   // CHECK_EQ(values.size(), total_elems);  //检查size相同
-// 	//基本属性
-//   const uint32_t rows = this->Rows();
-//   const uint32_t cols = this->Cols();
-//   const uint32_t channels = this->Channels();
-//   const uint32_t planes = rows * cols;
-
-//   for(uint32_t i = 0; i < channels; ++i){
-//     auto& channel_data = this->data_.Slice(i);
-// 		//指针起点为values.data() + i * planes, 大小为(this->Cols(), this->Rows())的vector片段
-//     const Eigen::MatrixXf& channel_data_t = Eigen::MatrixXf(values.data() + i * planes, this->Cols(), this->Rows());
-//     channel_data = channel_data_t.transpose();
-//   }
-// }
 
 //!
 void Tensor<float>::Ones() {
@@ -461,6 +443,7 @@ auto WriteFloat(const std::string& fileName, const float* data, unsigned int siz
     return true;
 }
 }  // namespace img_util_func
+
 auto Tensor<float>::FromImage(const std::string &path, bool scaling) -> int {
     std::vector<unsigned char> image;
     unsigned int width;
@@ -477,21 +460,21 @@ auto Tensor<float>::FromImage(const std::string &path, bool scaling) -> int {
     for (unsigned int i = 0; i < width * height * channels; i++) {
         float_data[i] = static_cast<float>(image[i]);
         if (scaling) {
-          float_data[i] /= 255.0F;
+            float_data[i] /= 255.0F;
         }
     }
 
     Eigen::Tensor<float, 3> img_tensor(height, width, channels);
 
     for (uint32_t i = 0; i < height; i++) {
-      for (uint32_t j = 0; j < width; j++) {
-        for (uint32_t c = 0; c < channels; c++) {
-          img_tensor(i, j, c) = float_data[c+j*3+i*3*128];
-          // if (c == 0 && i == 0) {
-          //   std::cout << img_tensor(i, j, c) << " ";
-          // }
+        for (uint32_t j = 0; j < width; j++) {
+            for (uint32_t c = 0; c < channels; c++) {
+                img_tensor(i, j, c) = float_data[c+j*3+i*3*128];
+                // if (c == 0 && i == 0) {
+                //   std::cout << img_tensor(i, j, c) << " ";
+                // }
+            }
         }
-      }
     }
     // std::cout<<std::endl;
 
