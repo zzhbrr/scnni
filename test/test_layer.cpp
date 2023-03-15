@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-15 03:08:28
+ * @LastEditTime: 2023-03-15 03:12:15
  * @Description: 
  * @FilePath: /scnni/test/test_layer.cpp
  */
@@ -205,6 +205,10 @@ TEST(maxpool2d_test, DISABLED_kernel2_padding0_stride2_1batch_test) {
   }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8ee198fbdcc157ee66e10a2f704c0660916dda31
 TEST(softmax_test, DISABLED_softmax_only_1batch_test) {
     srand(time(nullptr));
     std::cout << "In graph_test load params" << std::endl;
@@ -334,6 +338,7 @@ TEST(combine_test, input3x4x4_output12x1_test) {
     EXPECT_NEAR(output_data(2, 0, 0), 0.00276862, 1e-6);
 
 
+}
 TEST(conv2d_test, conv2d_test1) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;

@@ -1,7 +1,7 @@
 '''
-Author: zzh
-Date: 2023-03-14
-LastEditTime: 2023-03-15 03:09:15
+Author: xzj
+Date: 2023-03-15 03:11:41
+LastEditTime: 2023-03-15 03:12:34
 Description: 
 FilePath: /scnni/python_scripts/relu_maxpool_flatten_linear_softmax_net/relu_maxpool_flatten_linear_softmax_net.py
 '''
