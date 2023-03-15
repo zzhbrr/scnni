@@ -29,7 +29,6 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
-         
         auto in_shape = input_tensor_shptr->Shapes();
 
         Tensor<float> after_padding = *input_tensor_shptr;
@@ -70,20 +69,20 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
             step_h++;
             int step_w = 0;
             for (uint32_t w = 0; w < after_padding.Cols(); w += stride_[1]) {
-              if (step_w == out_w) {
-                break;
-              }
-              step_w++;
-              int rowcnt = 0;
-              for (int c = 0; c < in_channels_; c++) {
-                for (int i = 0; i < kernel_size_[0]; i++) {
-                  for (int j = 0; j < kernel_size_[1]; j++) {
-                    img_mat(rowcnt, colcnt) = after_padding.At(c, h + i * dilation_[0], w + j * dilation_[1]); 
-                    rowcnt++;
-                  }
+                if (step_w == out_w) {
+                    break;
                 }
-              }
-              colcnt++;
+                step_w++;
+                int rowcnt = 0;
+                for (int c = 0; c < in_channels_; c++) {
+                    for (int i = 0; i < kernel_size_[0]; i++) {
+                        for (int j = 0; j < kernel_size_[1]; j++) {
+                            img_mat(rowcnt, colcnt) = after_padding.At(c, h + i * dilation_[0], w + j * dilation_[1]); 
+                            rowcnt++;
+                        }
+                    }
+                }
+                colcnt++;
             }
         }
         after_padding.Show();
@@ -164,8 +163,8 @@ void Con2dLayer::SetBiasValue(const Attribute &att) {
     this->bias_v_ = std::make_shared<Tensor<float>>(1, att.shape_[0], 1);
     std::cout << "Conv2d bias:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
-      this->bias_v_->At(0, i, 0) = bias_value.at(i);
-      std::cout << this->bias_v_->At(0, i, 0) << " ";
+        this->bias_v_->At(0, i, 0) = bias_value.at(i);
+        std::cout << this->bias_v_->At(0, i, 0) << " ";
     }
     std::cout << std::endl;
 }

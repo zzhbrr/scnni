@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-14 
- * @LastEditTime: 2023-03-14 13:28:17
+ * @LastEditTime: 2023-03-15 07:10:56
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/layers/conv2d.hpp
+ * @FilePath: /scnni/include/scnni/layers/conv2d.hpp
  */
 #ifndef SCNNI_CONV2D_HPP_
 #define SCNNI_CONV2D_HPP_
@@ -29,7 +29,6 @@ class Con2dLayer: public Layer {
     void SetPadding(const std::vector<int>& padding);
     void SetPaddingmode(const std::string& padding_mode);
     void SetStiride(const std::vector<int>& stride);
-
     void SetWeights(const Attribute& att);
     void SetBiasValue(const Attribute& att);
 
