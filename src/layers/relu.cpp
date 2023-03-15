@@ -1,7 +1,5 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-09
- * @LastEditTime: 2023-03-13 11:45:48
  * @Description: 
  * @FilePath: /scnni/src/layers/relu.cpp
  */

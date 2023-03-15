@@ -1,7 +1,5 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04
- * @LastEditTime: 2023-03-13 08:36:27
  * @Description: 
  * @FilePath: /scnni/include/scnni/layer.hpp
  */

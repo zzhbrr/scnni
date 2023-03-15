@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-04 07:57:32
  * @Description: 
- * @FilePath: /SCNNI/include/macros.h
+ * @FilePath: /scnni/include/scnni/macros.h
  */
 #pragma once
 

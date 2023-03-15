@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-10 
- * @LastEditTime: 2023-03-15 07:45:06
  * @Description: 
- * @FilePath: /SCNNI/src/layers/flatten.cpp
+ * @FilePath: /scnni/src/layers/flatten.cpp
  */
 
 #include "scnni/layers/flatten.hpp"

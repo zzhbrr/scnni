@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-13
- * @LastEditTime: 2023-03-13 16:24:32
  * @Description
- * @FilePath: /SCNNI/include/scnni/layers/linear.hpp
+ * @FilePath: /scnni/include/scnni/layers/linear.hpp
  */
 
 #ifndef SCNNI_LINEAR_HPP_

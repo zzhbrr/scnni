@@ -1,7 +1,5 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-14 
- * @LastEditTime: 2023-03-15 07:10:56
  * @Description: 
  * @FilePath: /scnni/include/scnni/layers/conv2d.hpp
  */

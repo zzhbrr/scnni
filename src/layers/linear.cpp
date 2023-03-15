@@ -1,7 +1,5 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-13 12:28:42
- * @LastEditTime: 2023-03-15 08:01:04
  * @Description: 
  * @FilePath: /scnni/src/layers/linear.cpp
  */

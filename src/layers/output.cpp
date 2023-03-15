@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-06
- * @LastEditTime: 2023-03-09 12:39:47
  * @Description: 
- * @FilePath: /SCNNI/src/layers/output.cpp
+ * @FilePath: /scnni/src/layers/output.cpp
  */
 #include "scnni/layer.hpp"
 #include "scnni/tensor.hpp"
