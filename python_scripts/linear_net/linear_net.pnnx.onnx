@@ -1,0 +1,24 @@
+: 
+0pnnx_input_0"
+pnnx.Input
+b
+0
+linear.bias
+linear.weight1linear"	nn.Linear*
+bias*
+in_features*
+out_features
+
+1pnnx_output_0"pnnx.Output*
+Blinear.biasJÈ±É6!*5
+Blinear.weightJµR¶44¤0µƒ´ÿµ­,ò°Ñ1j¶«´¨=¶j
+0
+
+
+
+j
+1
+
+
+
+

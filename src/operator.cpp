@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-05
- * @LastEditTime: 2023-03-09 12:36:58
+ * @LastEditTime: 2023-03-13 17:12:12
  * @Description: 
  * @FilePath: /SCNNI/src/operator.cpp
  */
@@ -83,20 +83,42 @@ auto Parameter::GetFromString(const std::string &s) -> Parameter {
     return p;
 }
 
-template<class T>
-auto Attribute::Get() -> std::vector<T> {
+// template<typename T>
+// auto Attribute::Get() const -> std::vector<T> {
+//   /// 检查节点属性中的权重类型
+//   SCNNI_ASSERT(!weight_.empty(), "weight empty");
+//   SCNNI_ASSERT(type_ != AttrType::Unknow, "attrtype unknow");
+//   std::vector<T> weights;
+//   switch (type_) {
+//     case AttrType::Float32: {
+//       const bool is_float = std::is_same<T, float>::value;
+//       SCNNI_ASSERT(is_float == true, "");
+//       const uint32_t float_size = sizeof(float);
+//       SCNNI_ASSERT(weight_.size() % float_size == 0, "");
+//       for (uint32_t i = 0; i < weight_.size() / float_size; ++i) {
+//         float weight = *((float *)(weight_.data()) + i);
+//         weights.push_back(weight);
+//       }
+//       break;
+//     }
+//     default: {
+//       LOG_ERROR("AttrType Unsupport");
+//     }
+//   }
+//   return weights;
+// }
+
+auto Attribute::Get() const -> std::vector<float> {
   /// 检查节点属性中的权重类型
   SCNNI_ASSERT(!weight_.empty(), "weight empty");
   SCNNI_ASSERT(type_ != AttrType::Unknow, "attrtype unknow");
-  std::vector<T> weights;
+  std::vector<float> weights;
   switch (type_) {
     case AttrType::Float32: {
-      const bool is_float = std::is_same<T, float>::value;
-      SCNNI_ASSERT(is_float == true, "");
       const uint32_t float_size = sizeof(float);
       SCNNI_ASSERT(weight_.size() % float_size == 0, "");
       for (uint32_t i = 0; i < weight_.size() / float_size; ++i) {
-        float weight = *(reinterpret_cast<float *>(weight_.data()) + i);
+        float weight = *((float *)(weight_.data()) + i);
         weights.push_back(weight);
       }
       break;
@@ -107,14 +129,13 @@ auto Attribute::Get() -> std::vector<T> {
   }
   return weights;
 }
-
 auto Parameter::GetValueInt() -> int {
-  SCNNI_ASSERT(type_ == ParamType::Int, "Param Type Error");
-  return i_;
+    SCNNI_ASSERT(type_ == ParamType::Int, "Param Type Error");
+    return i_;
 }
 auto Parameter::GetValueFloat() -> float {
-  SCNNI_ASSERT(type_ == ParamType::Float, "Param Type Error");
-  return f_;
+    SCNNI_ASSERT(type_ == ParamType::Float, "Param Type Error");
+    return f_;
 }
 auto Parameter::GetValueString() -> std::string {
     SCNNI_ASSERT(type_ == ParamType::String, "Param Type Error");
@@ -137,4 +158,18 @@ Operator::~Operator() {
   delete[] layer_;
 }
 
+auto Operator::GetParam(const std::string &param_name) -> Parameter {
+    auto find_iter = this->params_.find(param_name);
+    if (find_iter == this->params_.end()) {
+      LOG_ERROR("Op [%s] has no param [%s]", this->name_.c_str(), param_name.c_str());
+    }
+    return find_iter->second;
+}
+auto Operator::GetAttr(const std::string &attr_name) -> Attribute {
+    auto find_iter = this->attrs_.find(attr_name);
+    if (find_iter == this->attrs_.end()) {
+      LOG_ERROR("Op [%s] has no attr [%s]", this->name_.c_str(), attr_name.c_str());
+    }
+    return find_iter->second;
+}
 } // namespace scnni

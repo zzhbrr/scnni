@@ -1,9 +1,9 @@
 /*
  * @Author: xzj
  * @Date: 2023-03-06 12:11:49
- * @LastEditTime: 2023-03-09 12:44:24
+ * @LastEditTime: 2023-03-13 10:19:49
  * @Description: 
- * @FilePath: /SCNNI/src/layers/input.cpp
+ * @FilePath: /scnni/src/layers/input.cpp
  */
 
 
@@ -15,13 +15,13 @@
 #include <vector>
 
 namespace scnni {
-auto InputLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<float>>>>
-                &input_blobs,
-            std::vector<std::vector<std::shared_ptr<Tensor<float>>>>
-                &output_blobs) const -> int {
+auto InputLayer::Forward(
+    const std::vector<std::vector<std::shared_ptr<Tensor<float>>>> &input_blobs,
+	std::vector<std::vector<std::shared_ptr<Tensor<float>>>> &output_blobs) const -> int {
     SCNNI_ASSERT(input_blobs.empty(), "InputLayer has input blobs");
     return 0;
-} 
+}
+
 auto GetInputLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return new InputLayer();
 }

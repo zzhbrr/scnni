@@ -17,8 +17,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Find 3rdparty
 find_package(Eigen3 REQUIRED)
 
+add_subdirectory(third_party)
 
 # Add Build library & execuable
+set(SCNNI_THIRD_PARTY_INCLUDE_DIR
+        ${PROJECT_SOURCE_DIR}/third_party
+    )
+include_directories(${SCNNI_THIRD_PARTY_INCLUDE_DIR})
 
 file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS src/*.cpp)
 add_library(${PROJECT_NAME} SHARED ${SRCS})
@@ -26,6 +31,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
+# target_include_directories(${PROJECT_NAME} PUBLIC third_party)
+# target_link_libraries(${PROJECT_NAME} PUBLIC stb_image)
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
 
 # 单元测试

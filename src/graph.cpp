@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-10 06:46:31
+ * @LastEditTime: 2023-03-15 07:44:03
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -208,7 +208,7 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
             for (int i = 0; i < input_blobs_count; i ++) {
                 std::string blob_name;
                 line_stream >> blob_name;
-                printf("input blob name : %s\n", blob_name.c_str());
+                // printf("input blob name : %s\n", blob_name.c_str());
                 std::shared_ptr<Blob> blob = GetBlobByName(blob_name); 
                 blob->consumers_.push_back(op);
                 op->inputs_[i] = blob;
@@ -219,7 +219,7 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
             for (int i = 0; i < output_blobs_count; i ++) {
                 std::string blob_name;
                 line_stream >> blob_name;
-                printf("output blob name : %s\n", blob_name.c_str());
+                // printf("output blob name : %s\n", blob_name.c_str());
                 std::shared_ptr<Blob> blob = std::make_shared<Blob>(blob_name);
                 blob->producer_ = op;
                 op->outputs_[i] = blob;
@@ -233,8 +233,8 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
                 std::getline(line_stream, key, '=');
                 // std::getline(line_stream, value);
                 line_stream >> value;
-                printf("key is %s, ", key.c_str());
-                printf("value is %s\n", value.c_str());
+                // printf("key is %s, ", key.c_str());
+                // printf("value is %s\n", value.c_str());
                 key.erase(key.begin());
 
                 if (key[0] == '@') {
@@ -255,16 +255,16 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
 
     for (const auto& blob: blobs_) {
         // print blob size's
-        LOG_DEBUG("blob %s has shape (%d %d %d %d)", blob->name_.c_str(),
+        LOG_DEBUG("blob %s has shape (%d %d %d %d) with shape length: %ld", blob->name_.c_str(),
                   blob->shape_[0], blob->shape_[1], blob->shape_[2],
-                  blob->shape_[3]);
+                  blob->shape_[3], blob->shape_.size());
         std::vector<uint32_t> tensorshape;
-        for (size_t j = 1; j < blob->shape_.size(); j++) {
+        for (size_t j = 1; j < blob->shape_.size(); j++) { // 忽略batch维度
           tensorshape.push_back(blob->shape_[j]);
         }
         SCNNI_ASSERT(tensorshape.size() <= 3, "tensor dim too large");
         if (tensorshape.size() == 1) {
-            tensorshape.insert(tensorshape.begin(), 1);
+            tensorshape.push_back(1);
             tensorshape.insert(tensorshape.begin(), 1);
         } else if (tensorshape.size() == 2) {
             tensorshape.insert(tensorshape.begin(), 1);

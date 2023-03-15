@@ -1,0 +1,9 @@
+7767517
+7 6
+pnnx.Input               pnnx_input_0             0 1 0 #0=(1,3,4,4)f32
+nn.ReLU                  relu                     1 1 0 1 #0=(1,3,4,4)f32 #1=(1,3,4,4)f32
+F.max_pool2d             F.max_pool2d_0           1 1 1 2 ceil_mode=False dilation=(1,1) kernel_size=(2,2) padding=(0,0) return_indices=False stride=(2,2) $input=1 #1=(1,3,4,4)f32 #2=(1,3,2,2)f32
+torch.flatten            torch.flatten_2          1 1 2 3 end_dim=-1 start_dim=1 $input=2 #2=(1,3,2,2)f32 #3=(1,12)f32
+nn.Linear                linear                   1 1 3 4 bias=True in_features=12 out_features=3 @bias=(3)f32 @weight=(3,12)f32 #3=(1,12)f32 #4=(1,3)f32
+F.softmax                F.softmax_1              1 1 4 5 dim=1 $input=4 #4=(1,3)f32 #5=(1,3)f32
+pnnx.Output              pnnx_output_0            1 0 5 #5=(1,3)f32

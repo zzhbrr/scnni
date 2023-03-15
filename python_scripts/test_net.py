@@ -1,10 +1,11 @@
 '''
 Author: zzh
 Date: 2023-03-09
-LastEditTime: 2023-03-09 13:09:21
+LastEditTime: 2023-03-13 14:24:26
 Description: 
-FilePath: /SCNNI/python_scripts/test_net.py
+FilePath: /scnni/python_scripts/test_net.py
 '''
+# https://github.com/pnnx/pnnx
 import torch
 import torch.nn as nn
 
@@ -13,7 +14,9 @@ class TestNet(nn.Module):
         super(TestNet, self).__init__()
         self.relu = nn.ReLU()
     def forward(self, x):
-        return self.relu(x)
+        x = self.relu(x)
+        x = nn.MaxPool2d(2, 2)(x)
+        return torch.flatten(x, 1)
 
 
 if __name__ == '__main__':
@@ -21,7 +24,9 @@ if __name__ == '__main__':
     net.eval()
     # x = torch.tensor([1, 2, 3, -1, -2, 4, 5, 6, -7, -8, 12, 11])
     # x = torch.reshape(x, (1, 3, 2, 2))
-    x = torch.rand(1, 3, 2, 2)
+    x = torch.rand(1, 3, 4, 4)
+    # y = net(x)
+    # print(y.shape)
     with torch.no_grad():
         mod = torch.jit.trace(net, x)
-        mod.save("relu_only_net/relu_only_net.pt")
+        mod.save("relu_maxpool_flatten_softmax_net.pt")

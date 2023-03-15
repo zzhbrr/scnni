@@ -1,0 +1,21 @@
+7767517
+19 18
+pnnx.Input               pnnx_input_0             0 1 x.1 #x.1=(1,3,4,4)f32
+prim::Constant           pnnx_0                   0 1 17 value=-1
+prim::Constant           pnnx_2                   0 1 7 value=2
+prim::Constant           pnnx_3                   0 1 10 value=0
+prim::Constant           pnnx_4                   0 1 12 value=1
+nn.ReLU                  relu                     1 1 x.1 6 #x.1=(1,3,4,4)f32 #6=(1,3,4,4)f32
+prim::Constant           pnnx_5                   0 1 28 value=2
+prim::ListConstruct      pnnx_6                   2 1 7 28 8
+prim::Constant           pnnx_7                   0 1 29 value=2
+prim::Constant           pnnx_8                   0 1 30 value=2
+prim::ListConstruct      pnnx_9                   2 1 29 30 9
+prim::Constant           pnnx_10                  0 1 31 value=0
+prim::ListConstruct      pnnx_11                  2 1 10 31 11
+prim::Constant           pnnx_12                  0 1 32 value=1
+prim::ListConstruct      pnnx_13                  2 1 12 32 13
+prim::Constant           pnnx_15                  0 1 33 value=1
+F.max_pool2d             F.max_pool2d_0           5 1 6 8 9 11 13 x0.1 ceil_mode=False return_indices=False $input=6 $kernel_size=8 $stride=9 $padding=11 $dilation=13 #6=(1,3,4,4)f32 #x0.1=(1,3,2,2)f32
+torch.flatten            torch.flatten_1          3 1 x0.1 33 17 18 $input=x0.1 $start_dim=33 $end_dim=17 #x0.1=(1,3,2,2)f32 #18=(1,12)f32
+pnnx.Output              pnnx_output_0            1 0 18 #18=(1,12)f32

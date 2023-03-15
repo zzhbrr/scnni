@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-09
- * @LastEditTime: 2023-03-10 06:46:16
+ * @LastEditTime: 2023-03-13 11:45:48
  * @Description: 
- * @FilePath: /SCNNI/src/layers/relu.cpp
+ * @FilePath: /scnni/src/layers/relu.cpp
  */
 #include "scnni/layer_factory.hpp"
 #include "scnni/tensor.hpp"
@@ -16,10 +16,9 @@
 #include <vector>
 
 namespace scnni {
-auto ReluLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<float>>>>
-                &input_blobs,
-            std::vector<std::vector<std::shared_ptr<Tensor<float>>>>
-                &output_blobs) const -> int {
+auto ReluLayer::Forward(
+    const std::vector<std::vector<std::shared_ptr<Tensor<float>>>> &input_blobs,
+    std::vector<std::vector<std::shared_ptr<Tensor<float>>>> &output_blobs) const -> int {
     SCNNI_ASSERT(!input_blobs.empty(), "ReluLayer's input blobs empty");
     SCNNI_ASSERT(input_blobs.size() == 1, "ReluLayer has multiple inputs");
     SCNNI_ASSERT(!output_blobs.empty(), "ReluLayer's output blobs empty");
@@ -36,10 +35,11 @@ auto ReluLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<flo
         }
     }
     return 0;
-} 
+}
+
 auto GetReluLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return new ReluLayer();
-} 
+}
 
 LayerRegistelrWrapper relu_layer_registe("nn.ReLU", LayerRegister::layer_creator_function(GetReluLayer));
 

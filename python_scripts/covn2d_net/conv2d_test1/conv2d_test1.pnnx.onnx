@@ -1,0 +1,35 @@
+:„
+0pnnx_input_0"
+pnnx.Input
+¿
+0
+	conv.bias
+conv.weight1conv"	nn.Conv2d*
+bias*
+dilation@@*
+
+groups*
+in_channels*
+kernel_size@@*
+out_channels*
+padding@@*
+padding_mode"zeros*
+stride@@
+
+1pnnx_output_0"pnnx.Output*
+B	conv.biasJÁ®ç/÷1	2*ª
+Bconv.weightJi0HªÊ0©˜›©°2«?1Ö«þ¯e)ÿ¬û©Í¡ù®†¯N+ ±¡0-¯£î©«.>,„£E-`2P1.‚²H°ý2v¯W¨“x¬230Ö±f3u!í®	°f2V3W³-®°_1½­)3¦¥53”2E3™¬±û0"³|®~0J3â¨Š°&3«±2.Ï2J*Å¬G1o1j
+0
+
+
+
+
+
+j
+1
+
+
+
+
+
+
