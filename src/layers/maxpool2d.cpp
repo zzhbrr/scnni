@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-12 
- * @LastEditTime: 2023-03-13 12:33:27
+ * @LastEditTime: 2023-03-15 07:38:14
  * @Description: 
- * @FilePath: /scnni/src/layers/maxpool2d.cpp
+ * @FilePath: /SCNNI/src/layers/maxpool2d.cpp
  */
 
 #include "scnni/layers/maxpool2d.hpp"
@@ -58,7 +58,7 @@ auto Maxpool2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tenso
                                static_cast<unsigned int>(padding_[1]),
                                static_cast<unsigned int>(padding_[1])},
                               -FLT_MAX);
-        LOG_DEBUG("Get Padding right");
+        // LOG_DEBUG("Get Padding right");
 
         for (uint32_t c = 0; c < in_shape[0]; c ++) {
             for (uint32_t i = 0; i < h_out; i ++) {
@@ -72,7 +72,7 @@ auto Maxpool2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tenso
                             res = std::max(res, after_padding.At(c, i * stride_[0] + p, j * stride_[1] + q));
                         }
                     }
-                    LOG_DEBUG("maxpool output [%u, %u, %u] = %.2f", c, i, j, res);
+                    // LOG_DEBUG("maxpool output [%u, %u, %u] = %.2f", c, i, j, res);
                     feat->At(c, i, j) = res;
                 }
             }
@@ -115,6 +115,7 @@ auto GetMaxpool2dLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return layer;
 } 
 
-LayerRegistelrWrapper maxpool2d_layer_registe("F.max_pool2d", LayerRegister::layer_creator_function(GetMaxpool2dLayer));
+LayerRegistelrWrapper f_maxpool2d_layer_registe("F.max_pool2d", LayerRegister::layer_creator_function(GetMaxpool2dLayer));
+LayerRegistelrWrapper nn_maxpool2d_layer_registe("nn.MaxPool2d", LayerRegister::layer_creator_function(GetMaxpool2dLayer));
 
 }  // namespace scnni

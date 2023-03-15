@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-13 12:28:42
- * @LastEditTime: 2023-03-15 03:31:26
+ * @LastEditTime: 2023-03-15 08:01:04
  * @Description: 
  * @FilePath: /scnni/src/layers/linear.cpp
  */
@@ -65,25 +65,25 @@ void LinearLayer::SetWeights(const Attribute &att) {
     SCNNI_ASSERT(att.shape_.size() == 2, "Linear: weight att shape != 2");
     std::vector<float> weights = att.Get();
     this->weights_ = std::make_shared<Tensor<float>>(1, att.shape_[0], att.shape_[1]);
-    std::cout << "Linear weight:" << std::endl;
+    // std::cout << "Linear weight:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
         for (int j = 0; j < att.shape_[1]; j ++) {
             this->weights_->At(0, i, j) = weights.at(j + i * att.shape_[1]);
-            std::cout << this->weights_->At(0, i, j) << " ";
+            // std::cout << this->weights_->At(0, i, j) << " ";
         }
-        std::cout << std::endl;
+        // std::cout << std::endl;
     }
 }
 void LinearLayer::SetBiasValue(const Attribute &att) {
     SCNNI_ASSERT(att.shape_.size() == 1, "Linear: bias att shape != 1");
     std::vector<float> bias_value = att.Get();
     this->bias_v_ = std::make_shared<Tensor<float>>(1, att.shape_[0], 1);
-    std::cout << "Linear bias:" << std::endl;
+    // std::cout << "Linear bias:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
       this->bias_v_->At(0, i, 0) = bias_value.at(i);
-      std::cout << this->bias_v_->At(0, i, 0) << " ";
+    //   std::cout << this->bias_v_->At(0, i, 0) << " ";
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
 auto GetLinearLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     auto* layer = new LinearLayer();

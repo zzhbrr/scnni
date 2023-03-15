@@ -5,12 +5,18 @@
 #include "scnni/tensor.hpp"
 #include "scnni/macros.h"
 #include "scnni/logger.hpp"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image/stb_image.h"
 #include <Eigen/src/Core/util/Constants.h>
 #include <bits/stdint-uintn.h>
+#include <iterator>
 #include <memory>
 #include <cmath>
 #include <iostream>
 #include <unsupported/Eigen/CXX11/src/util/EmulateArray.h>
+#include <fstream>
+#include <cstdint>
+
 
 namespace scnni {
 
@@ -412,10 +418,89 @@ void Tensor<float>::Flatten() {
 auto Tensor<float>::Clone() -> std::shared_ptr<Tensor<float>> {
   return std::make_shared<Tensor<float>>(*this);
 }
+namespace img_util_func {
+auto ReadJpg(const std::string& fileName, std::vector<unsigned char>& image, unsigned int& width, unsigned int& height, unsigned int& channels) -> bool {
+    std::ifstream file(fileName, std::ios::binary);
+    if (!file.is_open()) {
+        return false;
+    }
 
+    // 按字节读取文件
+    file.unsetf(std::ios::skipws);
+    std::streampos file_size;
+    file.seekg(0, std::ios::end);
+    file_size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<unsigned char> file_data;
+    file_data.reserve(file_size);
+    file_data.insert(file_data.begin(), std::istream_iterator<unsigned char>(file), std::istream_iterator<unsigned char>());
+    file.close();
 
+    // 解析JPEG文件
+    unsigned char* image_data = stbi_load_from_memory(file_data.data(), file_data.size(), reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height), reinterpret_cast<int*>(&channels), STBI_rgb);
+    if (image_data == nullptr) {
+        return false;
+    }
 
+    image.resize(width * height * channels);
+    std::memcpy(image.data(), image_data, width * height * channels);
+    stbi_image_free(image_data);
 
+    return true;
+}
+
+auto WriteFloat(const std::string& fileName, const float* data, unsigned int size) -> bool {
+    std::ofstream file(fileName, std::ios::binary);
+    if (!file.is_open()) {
+        return false;
+    }
+
+    file.write(reinterpret_cast<const char*>(data), size * sizeof(float));
+    file.close();
+
+    return true;
+}
+}  // namespace img_util_func
+auto Tensor<float>::FromImage(const std::string &path, bool scaling) -> int {
+    std::vector<unsigned char> image;
+    unsigned int width;
+    unsigned int height;
+    unsigned int channels;
+    bool success = img_util_func::ReadJpg(path, image, width, height, channels);
+    if (!success) {
+        std::cerr << "Failed to read image." << std::endl;
+        return 1;
+    }
+    // std::cout <<"width: " << width << "  height: " << height << "  channels: " << channels << std::endl;
+    // 将unsigned char数组转换为float数组
+    auto* float_data = new float[width * height * channels];
+    for (unsigned int i = 0; i < width * height * channels; i++) {
+        float_data[i] = static_cast<float>(image[i]);
+        if (scaling) {
+          float_data[i] /= 255.0F;
+        }
+    }
+
+    Eigen::Tensor<float, 3> img_tensor(height, width, channels);
+
+    for (uint32_t i = 0; i < height; i++) {
+      for (uint32_t j = 0; j < width; j++) {
+        for (uint32_t c = 0; c < channels; c++) {
+          img_tensor(i, j, c) = float_data[c+j*3+i*3*128];
+          // if (c == 0 && i == 0) {
+          //   std::cout << img_tensor(i, j, c) << " ";
+          // }
+        }
+      }
+    }
+    // std::cout<<std::endl;
+
+    this->data_ = img_tensor;
+    this->raw_shapes_ = {channels, height, width};
+
+    delete[] float_data;
+    return 0;
+}
 
 // void Tensor<float>::Review(const std::vector<uint32_t>& shapes) {
 //   SCNNI_ASSERT(this->data_.size(), "data_ is empty");

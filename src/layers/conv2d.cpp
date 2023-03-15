@@ -39,9 +39,9 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
                                0);
         SCNNI_ASSERT((int)feat->Shapes()[0] == out_channels_, "Conv2d: output channels not match output blob's shape");
         int out_h = (input_tensor_shptr->Rows() + 2 * padding_[0] -
-                         dilation_[0] * (kernel_size_[0] - 1)) / stride_[0] + 1;
+                         dilation_[0] * (kernel_size_[0] - 1) - 1) / stride_[0] + 1;
         int out_w = (input_tensor_shptr->Cols() + 2 * padding_[1] -
-                         dilation_[1] * (kernel_size_[1] - 1)) / stride_[1] + 1;
+                         dilation_[1] * (kernel_size_[1] - 1) - 1) / stride_[1] + 1;
         // LOG_DEBUG("Conv2dLayer: out_h:%d, out_w:%d", out_h, out_w);
         SCNNI_ASSERT(out_h == (int)feat->Rows(), "Conv2dLayer: shape not right");
         SCNNI_ASSERT(out_w == (int)feat->Cols(), "Conv2dLayer: shape not right");
@@ -85,14 +85,14 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
                 colcnt++;
             }
         }
-        after_padding.Show();
-        for (int i = 0; i < kernel_size_[0]*kernel_size_[1]*in_channels_; i ++) {
-            for (int j = 0; j < out_h*out_w; j ++) {
-                std::cout << img_mat(i, j) << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << "ready to matmul" << std::endl;
+        // after_padding.Show();
+        // for (int i = 0; i < kernel_size_[0]*kernel_size_[1]*in_channels_; i ++) {
+        //     for (int j = 0; j < out_h*out_w; j ++) {
+        //         std::cout << img_mat(i, j) << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+        // std::cout << "ready to matmul" << std::endl;
         mulres = kernel_mat * img_mat; // out_channels x (out_w * out_h)
         for (int c = 0; c < out_channels_; c ++) {
             for (int i = 0; i < out_h; i ++) {
@@ -141,32 +141,32 @@ void Con2dLayer::SetWeights(const Attribute &att) {
     // LOG_DEBUG("Conv2d weight shape: [%d %d %d %d]", att.shape_[0], att.shape_[1], att.shape_[2], att.shape_[3]);
     std::vector<float> weights = att.Get();
     this->weights_.resize(att.shape_[0]);
-    std::cout << "Linear weight:" << std::endl;
+    // std::cout << "Linear weight:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
         this->weights_.at(i) = std::make_shared<Tensor<float>>(att.shape_[1], att.shape_[2], att.shape_[3]);
-        std::cout << i << "'th" << std::endl;
+        // std::cout << i << "'th" << std::endl;
         for (int c = 0; c < att.shape_[1]; c ++) {
             for (int h = 0; h < att.shape_[2]; h ++) {
                 for (int w = 0; w < att.shape_[3]; w ++) {
                     this->weights_.at(i)->At(c, h, w) = weights.at(w + h * att.shape_[3] + c * att.shape_[2] * att.shape_[3] + i * att.shape_[1]*att.shape_[2]*att.shape_[3]);
-                    std::cout << this->weights_.at(i)->At(c, h, w) << " ";
+                    // std::cout << this->weights_.at(i)->At(c, h, w) << " ";
                 }
-                std::cout << std::endl;
+                // std::cout << std::endl;
             }
         }
-        std::cout << std::endl;
+        // std::cout << std::endl;
     }
 }
 void Con2dLayer::SetBiasValue(const Attribute &att) {
     SCNNI_ASSERT(att.shape_.size() == 1, "Conv2d: bias att shape != 1");
     std::vector<float> bias_value = att.Get();
     this->bias_v_ = std::make_shared<Tensor<float>>(1, att.shape_[0], 1);
-    std::cout << "Conv2d bias:" << std::endl;
+    // std::cout << "Conv2d bias:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
-        this->bias_v_->At(0, i, 0) = bias_value.at(i);
-        std::cout << this->bias_v_->At(0, i, 0) << " ";
+      this->bias_v_->At(0, i, 0) = bias_value.at(i);
+    //   std::cout << this->bias_v_->At(0, i, 0) << " ";
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
 auto GetConv2dLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     auto* layer = new Con2dLayer();

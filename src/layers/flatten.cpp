@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-10 
- * @LastEditTime: 2023-03-13 11:46:01
+ * @LastEditTime: 2023-03-15 07:45:06
  * @Description: 
  * @FilePath: /SCNNI/src/layers/flatten.cpp
  */
@@ -21,7 +21,7 @@ auto FlattenLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<
     SCNNI_ASSERT(!input_blobs.empty(), "FlattenLayer's input blobs empty");
     SCNNI_ASSERT(input_blobs.size() == 1, "FlattenLayer has multiple inputs");
     SCNNI_ASSERT(!output_blobs.empty(), "FlattenLayer's output blobs empty");
-    LOG_DEBUG("FlattenLayer forward: start_dim: %d, end_dim: %d", start_dim_, end_dim_);
+    // LOG_DEBUG("FlattenLayer forward: start_dim: %d, end_dim: %d", start_dim_, end_dim_);
     int start_dim = start_dim_;
     int end_dim = end_dim_;
     if (start_dim < 0) {

@@ -1,9 +1,9 @@
 /*
  * @Author: xzj
- * @Date: 2023-03-13 11:18:42
- * @LastEditTime: 2023-03-13 14:05:43
+ * @Date: 2023-03-13 
+ * @LastEditTime: 2023-03-15 07:40:25
  * @Description: 
- * @FilePath: /scnni/src/layers/softmax.cpp
+ * @FilePath: /SCNNI/src/layers/softmax.cpp
  */
 #include "scnni/layer_factory.hpp"
 #include "scnni/tensor.hpp"
@@ -32,12 +32,12 @@ auto SoftmaxLayer::Forward(
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(batch);
 
         float sum = 0;
-        LOG_DEBUG("Softmax: input shape [%d, %d, %d]", input_tensor_shptr->Rows(), input_tensor_shptr->Cols(), input_tensor_shptr->Channels());
+        // LOG_DEBUG("Softmax: input shape [%d, %d, %d]", input_tensor_shptr->Rows(), input_tensor_shptr->Cols(), input_tensor_shptr->Channels());
         for (size_t i = 0; i < input_tensor_shptr->Rows(); i ++) {
             sum += exp(input_tensor_shptr->At(0, i, 0));
-            LOG_DEBUG("%f", input_tensor_shptr->At(0, i, 0));
+            // LOG_DEBUG("%f", input_tensor_shptr->At(0, i, 0));
         }
-        std::cout << sum << std::endl;
+        // std::cout << sum << std::endl;
         for (size_t i = 0; i < input_tensor_shptr->Rows(); i ++) {
             feat->At(0, i, 0) = exp(input_tensor_shptr->At(0, i, 0)) / sum;
         }
@@ -56,6 +56,7 @@ auto GetSoftmaxLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return layer;
 }
 
-LayerRegistelrWrapper softmax_layer_registe("F.softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
+LayerRegistelrWrapper f_softmax_layer_registe("F.softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
+LayerRegistelrWrapper nn_softmax_layer_registe("nn.Softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
 
 }  // namespace scnni

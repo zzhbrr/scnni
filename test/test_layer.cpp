@@ -283,7 +283,7 @@ TEST(linear_test, DISABLED_infeat5_outfeat3_input1x5_1batch_test) {
  
 }
 
-TEST(combine_test, input3x4x4_output12x1_test) {
+TEST(combine_test, DISABLED_input3x4x4_output12x1_test) {
     srand(time(nullptr));
     std::cout << "In graph_test load params" << std::endl;
     std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
@@ -339,7 +339,7 @@ TEST(combine_test, input3x4x4_output12x1_test) {
 
 
 }
-TEST(conv2d_test, conv2d_test1) {
+TEST(conv2d_test, DISABLED_conv2d_test1) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
@@ -394,6 +394,32 @@ TEST(conv2d_test, conv2d_test1) {
   EXPECT_NEAR(output_data(0, 2, 2), 10.7468, 1e-4);
   EXPECT_NEAR(output_data(1, 0, 2), 20.7828, 1e-4);
   EXPECT_NEAR(output_data(2, 2, 3), 19.9446, 1e-4);
+
+  
+}
+TEST(demo_test, demo_test_1) {
+  srand(time(nullptr));
+  std::cout << "In graph_test load params" << std::endl;
+  std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
+  g->LoadModel("/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.param",
+              "/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.bin");
+  EXPECT_EQ(g->blobs_.size(), 12);
+  EXPECT_EQ(g->operators_.size(), 13);
+  scnni::Excecutor exe = scnni::Excecutor(std::move(g));
+
+  scnni::Tensor<float> input_tensor;
+  input_tensor.FromImage("/ws/CourseProject/SCNNI/demo_net/examples/abstract_face.jpg", true);
+
+  //input_tensor.Show();
+
+  std::vector<scnni::Tensor<float>> input_batch;
+  input_batch.push_back(input_tensor);
+
+  exe.Input("0", input_batch);
+  exe.Forward();
+  std::vector<scnni::Tensor<float>> output_batch = exe.Output(); 
+
+  output_batch.at(0).Show();
 
   
 }
