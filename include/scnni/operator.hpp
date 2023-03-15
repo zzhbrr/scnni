@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-05 
- * @LastEditTime: 2023-03-13 17:11:50
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/operator.hpp
+ * @FilePath: /scnni/include/scnni/operator.hpp
  */
 #ifndef SCNNI_OPERATOR_HPP_
 #define SCNNI_OPERATOR_HPP_

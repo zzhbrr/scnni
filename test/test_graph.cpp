@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-05 09:56:09
- * @LastEditTime: 2023-03-08 12:42:07
  * @Description: 
- * @FilePath: /SCNNI/test/test_graph.cpp
+ * @FilePath: /scnni/test/test_graph.cpp
  */
 
 #include "scnni/graph.hpp"

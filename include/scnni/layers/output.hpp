@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-06
- * @LastEditTime: 2023-03-09 12:45:24
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/layers/output.hpp
+ * @FilePath: /scnni/include/scnni/layers/output.hpp
  */
 #ifndef SCNNI_LAYERS_OUTPUT_HPP_
 #define SCNNI_LAYERS_OUTPUT_HPP_

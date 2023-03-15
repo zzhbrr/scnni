@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-12 
- * @LastEditTime: 2023-03-15 07:38:14
  * @Description: 
- * @FilePath: /SCNNI/src/layers/maxpool2d.cpp
+ * @FilePath: /scnni/src/layers/maxpool2d.cpp
  */
 
 #include "scnni/layers/maxpool2d.hpp"
@@ -34,6 +32,7 @@ auto Maxpool2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tenso
     if (!(dilation_[0] == 1 && dilation_[1] == 1)) {
         LOG_ERROR("Maxpool2dLayer: dilation not implemented");
     }
+    //遍历batch_size
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         auto input_tensor_shptr = input_blobs[0][batch];
         std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
@@ -115,7 +114,9 @@ auto GetMaxpool2dLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return layer;
 } 
 
+// 注册算子: name="F.max_pool2d" and type = GetMaxpool2dLayer
 LayerRegistelrWrapper f_maxpool2d_layer_registe("F.max_pool2d", LayerRegister::layer_creator_function(GetMaxpool2dLayer));
+// 注册算子: name="nn.MaxPool2d" and type = GetMaxpool2dLayer
 LayerRegistelrWrapper nn_maxpool2d_layer_registe("nn.MaxPool2d", LayerRegister::layer_creator_function(GetMaxpool2dLayer));
 
 }  // namespace scnni

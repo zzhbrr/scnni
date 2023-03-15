@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-05
- * @LastEditTime: 2023-03-13 17:12:12
  * @Description: 
- * @FilePath: /SCNNI/src/operator.cpp
+ * @FilePath: /scnni/src/operator.cpp
  */
 
 #include "scnni/operator.hpp"

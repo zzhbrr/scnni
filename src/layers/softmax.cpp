@@ -1,9 +1,7 @@
 /*
  * @Author: xzj
- * @Date: 2023-03-13 
- * @LastEditTime: 2023-03-15 07:40:25
  * @Description: 
- * @FilePath: /SCNNI/src/layers/softmax.cpp
+ * @FilePath: /scnni/src/layers/softmax.cpp
  */
 #include "scnni/layer_factory.hpp"
 #include "scnni/tensor.hpp"
@@ -27,6 +25,7 @@ auto SoftmaxLayer::Forward(
     SCNNI_ASSERT(!output_blobs.empty(), "SoftmaxLayer's output blobs empty");
     int dim = dim_;
     // SCNNI_ASSERT(dim == -1, "SoftmaxLayer: dim not implemented");
+    //遍历batch_size
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(batch);
@@ -56,7 +55,9 @@ auto GetSoftmaxLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return layer;
 }
 
+// 注册算子: name="F.softmax" and type = GetSoftmaxLayer
 LayerRegistelrWrapper f_softmax_layer_registe("F.softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
+// 注册算子: name="nn.Softmax" and type = GetSoftmaxLayer
 LayerRegistelrWrapper nn_softmax_layer_registe("nn.Softmax", LayerRegister::layer_creator_function(GetSoftmaxLayer));
 
 }  // namespace scnni

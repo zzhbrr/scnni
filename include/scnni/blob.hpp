@@ -1,9 +1,7 @@
 /*
  * @Author: zzh
- * @Date: 2023-03-04 12:37:46
- * @LastEditTime: 2023-03-08 06:03:36
  * @Description: 
- * @FilePath: /SCNNI/include/scnni/blob.hpp
+ * @FilePath: /scnni/include/scnni/blob.hpp
  */
 #ifndef SCNNI_BLOB_HPP_
 #define SCNNI_BLOB_HPP_
