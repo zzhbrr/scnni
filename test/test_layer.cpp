@@ -396,8 +396,8 @@ TEST(demo_test, DISABLED_demo_test_1) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.param",
-              "/ws/CourseProject/SCNNI/demo_net/demo_net.pnnx.bin");
+  g->LoadModel("../demo_net/demo_net.pnnx.param",
+              "../demo_net/demo_net.pnnx.bin");
   EXPECT_EQ(g->blobs_.size(), 12);
   EXPECT_EQ(g->operators_.size(), 13);
   scnni::Excecutor exe = scnni::Excecutor(std::move(g));
