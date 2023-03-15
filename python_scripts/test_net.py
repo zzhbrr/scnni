@@ -1,10 +1,11 @@
 '''
 Author: zzh
 Date: 2023-03-09
-LastEditTime: 2023-03-11 16:04:19
+LastEditTime: 2023-03-13 14:24:26
 Description: 
-FilePath: /SCNNI/python_scripts/test_net.py
+FilePath: /scnni/python_scripts/test_net.py
 '''
+# https://github.com/pnnx/pnnx
 import torch
 import torch.nn as nn
 
@@ -28,4 +29,4 @@ if __name__ == '__main__':
     # print(y.shape)
     with torch.no_grad():
         mod = torch.jit.trace(net, x)
-        mod.save("relu_maxpool_flatten_net/relu_maxpool_flatten_net.pt")
+        mod.save("relu_maxpool_flatten_softmax_net.pt")
