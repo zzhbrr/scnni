@@ -397,7 +397,7 @@ TEST(conv2d_test, DISABLED_conv2d_test1) {
 
   
 }
-TEST(demo_test, demo_test_1) {
+TEST(demo_test, DISABLED_demo_test_1) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
   std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();

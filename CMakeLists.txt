@@ -31,9 +31,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-# target_include_directories(${PROJECT_NAME} PUBLIC third_party)
-# target_link_libraries(${PROJECT_NAME} PUBLIC stb_image)
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
+
+# demo
+add_subdirectory(demo_net)
 
 # 单元测试
 add_subdirectory(test)
