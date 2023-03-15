@@ -21,6 +21,8 @@ auto OutputLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<f
 }
 auto GetOutputLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return new OutputLayer();
-} 
+}
+
+// 注册算子: name="pnnx.Output" and type = GetOutputLayer
 LayerRegistelrWrapper output_layer_registe("pnnx.Output", LayerRegister::layer_creator_function(GetOutputLayer));
 }  // namespace scnni

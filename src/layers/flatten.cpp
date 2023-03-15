@@ -23,15 +23,15 @@ auto FlattenLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<
     int start_dim = start_dim_;
     int end_dim = end_dim_;
     if (start_dim < 0) {
-      start_dim = 4 + start_dim;
+        start_dim = 4 + start_dim;
     }
     if (end_dim < 0) {
-      end_dim = 4 + end_dim;
+        end_dim = 4 + end_dim;
     }
     start_dim -= 1; // 去除Batchsize维度
     end_dim -= 1;   // 去除Batchsize维度
     SCNNI_ASSERT(start_dim <= end_dim, "End dim must larger than start dim");
-
+    //遍历batch_size
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
@@ -70,7 +70,7 @@ auto GetFlattenLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     return layer;
 } 
 
+// 注册算子: name="torch.flatten" and type = GetFlattenLayer
 LayerRegistelrWrapper flatten_layer_registe("torch.flatten", LayerRegister::layer_creator_function(GetFlattenLayer));
-
 
 }  // namespace scnni

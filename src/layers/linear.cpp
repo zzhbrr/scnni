@@ -1,6 +1,6 @@
 /*
  * @Author: zzh
- * @Description: 
+ * @Description: Define variable, forward_function and set_function of linear_layer
  * @FilePath: /scnni/src/layers/linear.cpp
  */
 #include "scnni/layers/linear.hpp"
@@ -24,20 +24,23 @@ auto LinearLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<f
     SCNNI_ASSERT(input_blobs.size() == 1, "Maxpool2dLayer has multiple inputs");
     SCNNI_ASSERT(!output_blobs.empty(), "Maxpool2dLayer's output blobs empty");
     // LOG_DEBUG("FlattenLayer forward: start_dim: %d, end_dim: %d", start_dim_, end_dim_);
+    //遍历batch_size
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(batch);
-        
         auto in_shape = input_tensor_shptr->Shapes();
 
+        // linear输入tensor必须为一维向量
         if (in_shape[0] == 1 && in_shape[2] == 1) { // channel = 0, cols = 0, only has one dimension
             SCNNI_ASSERT(feat->RawShapes().size() == 1, "LinearLayer: input tensor has one dimension, but output tensor has more than one dimensions");
+            // 计算 input_tensor * weights(out_features, in_features) = output_tensor
             for (uint32_t k = 0; k < feat->Rows(); k ++) {
                 feat->At(0, k, 0) = 0;
                 for (uint32_t i = 0; i < in_shape[1]; i ++) {
                     feat->At(0, k, 0) += weights_->At(0, k, i) * input_tensor_shptr->At(0, i, 0);
-                }//c, h, w
+                }
             }
+            // 计算 input_tensor + bias(out_features) = output_tensor
             if (bias_) {
                 for (uint32_t k = 0; k < feat->Rows(); k++) {
                     feat->At(0, k, 0) += bias_v_->At(0, k, 0);
@@ -50,6 +53,7 @@ auto LinearLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<f
     
     return 0;
 }
+
 void LinearLayer::SetBias(bool bias) {
     bias_ = bias;
 }
@@ -78,11 +82,12 @@ void LinearLayer::SetBiasValue(const Attribute &att) {
     this->bias_v_ = std::make_shared<Tensor<float>>(1, att.shape_[0], 1);
     // std::cout << "Linear bias:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
-      this->bias_v_->At(0, i, 0) = bias_value.at(i);
+        this->bias_v_->At(0, i, 0) = bias_value.at(i);
     //   std::cout << this->bias_v_->At(0, i, 0) << " ";
     }
     // std::cout << std::endl;
 }
+
 auto GetLinearLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     auto* layer = new LinearLayer();
     Parameter p = op->GetParam("bias");
@@ -95,12 +100,12 @@ auto GetLinearLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     Attribute att = op->GetAttr("weight");
     layer->SetWeights(att);
     if (use_bias) {
-      att = op->GetAttr("bias");
-      layer->SetBiasValue(att);
+        att = op->GetAttr("bias");
+        layer->SetBiasValue(att);
     }
     return layer;
 } 
-
+// 注册算子: name="nn.Linear" and type = GetLinearLayer
 LayerRegistelrWrapper linear_layer_registe("nn.Linear", LayerRegister::layer_creator_function(GetLinearLayer));
 
 }  // namespace scnni

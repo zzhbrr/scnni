@@ -393,19 +393,6 @@ TEST(conv2d_test, DISABLED_conv2d_test1) {
   
 }
 TEST(demo_test, DISABLED_demo_test_1) {
-  srand(time(nullptr));
-  std::cout << "In graph_test load params" << std::endl;
-  std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
-  g->LoadModel("../demo_net/demo_net.pnnx.param",
-              "../demo_net/demo_net.pnnx.bin");
-  EXPECT_EQ(g->blobs_.size(), 12);
-  EXPECT_EQ(g->operators_.size(), 13);
-  scnni::Excecutor exe = scnni::Excecutor(std::move(g));
-
-  scnni::Tensor<float> input_tensor;
-  input_tensor.FromImage("/ws/CourseProject/SCNNI/demo_net/examples/abstract_face.jpg", true);
-
-TEST(demo_test, DISABLED_demo_test_1) {
     srand(time(nullptr));
     std::cout << "In graph_test load params" << std::endl;
     std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
