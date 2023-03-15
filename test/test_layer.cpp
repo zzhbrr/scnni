@@ -1,9 +1,9 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-15 07:36:43
+ * @LastEditTime: 2023-03-15 03:12:15
  * @Description: 
- * @FilePath: /SCNNI/test/test_layer.cpp
+ * @FilePath: /scnni/test/test_layer.cpp
  */
 #include "scnni/graph.hpp"
 #include <cstdlib>
@@ -205,7 +205,10 @@ TEST(maxpool2d_test, DISABLED_kernel2_padding0_stride2_1batch_test) {
   }
 }
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> 8ee198fbdcc157ee66e10a2f704c0660916dda31
 TEST(softmax_test, DISABLED_softmax_only_1batch_test) {
     srand(time(nullptr));
     std::cout << "In graph_test load params" << std::endl;
