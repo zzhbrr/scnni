@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04
- * @LastEditTime: 2023-03-13 08:27:51
+ * @LastEditTime: 2023-03-15 07:44:03
  * @Description: 
  * @FilePath: /SCNNI/src/graph.cpp
  */
@@ -208,7 +208,7 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
             for (int i = 0; i < input_blobs_count; i ++) {
                 std::string blob_name;
                 line_stream >> blob_name;
-                printf("input blob name : %s\n", blob_name.c_str());
+                // printf("input blob name : %s\n", blob_name.c_str());
                 std::shared_ptr<Blob> blob = GetBlobByName(blob_name); 
                 blob->consumers_.push_back(op);
                 op->inputs_[i] = blob;
@@ -219,7 +219,7 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
             for (int i = 0; i < output_blobs_count; i ++) {
                 std::string blob_name;
                 line_stream >> blob_name;
-                printf("output blob name : %s\n", blob_name.c_str());
+                // printf("output blob name : %s\n", blob_name.c_str());
                 std::shared_ptr<Blob> blob = std::make_shared<Blob>(blob_name);
                 blob->producer_ = op;
                 op->outputs_[i] = blob;
@@ -233,8 +233,8 @@ auto Graph::LoadModel(const std::string &parampath, const std::string &binpath) 
                 std::getline(line_stream, key, '=');
                 // std::getline(line_stream, value);
                 line_stream >> value;
-                printf("key is %s, ", key.c_str());
-                printf("value is %s\n", value.c_str());
+                // printf("key is %s, ", key.c_str());
+                // printf("value is %s\n", value.c_str());
                 key.erase(key.begin());
 
                 if (key[0] == '@') {
