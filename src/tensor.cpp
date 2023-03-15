@@ -22,31 +22,33 @@ namespace scnni {
 
 //!
 Tensor<float>::Tensor(uint32_t channels, uint32_t rows, uint32_t cols) {
-  data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
-  if (channels == 1 && cols == 1) {
-    this->raw_shapes_ = std::vector<uint32_t>{rows};
-  } else if (channels == 1) {
-    this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
-  } else {
-    this->raw_shapes_ = std::vector<uint32_t>{channels, rows, cols};
-  }
+    data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
+    if (channels == 1 && cols == 1) {
+        this->raw_shapes_ = std::vector<uint32_t>{rows};
+    } else if (channels == 1) {
+        this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
+    } else {
+        this->raw_shapes_ = std::vector<uint32_t>{channels, rows, cols};
+    }
 }
 
-//!
+/**
+ * @description: 构造
+ */
 Tensor<float>::Tensor(const std::vector<uint32_t>& shapes) {
-  SCNNI_ASSERT(shapes.size() == 3, "Find shapes.size() != 3");
-  uint32_t channels = shapes.at(0);
-  uint32_t rows = shapes.at(1);
-  uint32_t cols = shapes.at(2);
+    SCNNI_ASSERT(shapes.size() == 3, "Find shapes.size() != 3");
+    uint32_t channels = shapes.at(0);
+    uint32_t rows = shapes.at(1);
+    uint32_t cols = shapes.at(2);
 
-  data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
-  if (channels == 1 && cols == 1) {
-    this->raw_shapes_ = std::vector<uint32_t>{rows};
-  } else if (channels == 1) {
-    this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
-  } else {
-    this->raw_shapes_ = std::vector<uint32_t>{channels, rows, cols};
-  }
+    data_ = Eigen::Tensor<float, 3>(rows, cols, channels);
+    if (channels == 1 && cols == 1) {
+        this->raw_shapes_ = std::vector<uint32_t>{rows};
+    } else if (channels == 1) {
+        this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
+    } else {
+        this->raw_shapes_ = std::vector<uint32_t>{channels, rows, cols};
+    }
 }
 
 /**
@@ -55,17 +57,17 @@ Tensor<float>::Tensor(const std::vector<uint32_t>& shapes) {
  * @return {*}
  */
 Tensor<float>::Tensor(const Tensor& tensor) {
-  if (this != &tensor) {
-    this->data_ = tensor.data_;
-    this->raw_shapes_ = tensor.raw_shapes_;
-  }
+    if (this != &tensor) {
+        this->data_ = tensor.data_;
+        this->raw_shapes_ = tensor.raw_shapes_;
+    }
 }
 
 Tensor<float>::Tensor(Tensor<float>&& tensor) noexcept {
-  if (this != &tensor) {
-    this->data_ = tensor.GetData();
-    this->raw_shapes_ = tensor.raw_shapes_;
-  }
+    if (this != &tensor) {
+        this->data_ = tensor.GetData();
+        this->raw_shapes_ = tensor.raw_shapes_;
+    }
 }
 
 // auto Tensor<float>::operator=(Tensor<float>&& tensor) noexcept -> Tensor<float>& {
@@ -77,43 +79,43 @@ Tensor<float>::Tensor(Tensor<float>&& tensor) noexcept {
 // }
 
 auto Tensor<float>::operator=(const Tensor& tensor) -> Tensor<float>& {
-  if (this != &tensor) {
-    this->data_ = tensor.data_;
-    this->raw_shapes_ = tensor.raw_shapes_;
-  }
-  return *this;
+    if (this != &tensor) {
+        this->data_ = tensor.data_;
+        this->raw_shapes_ = tensor.raw_shapes_;
+    }
+    return *this;
 }
 
 //!
 auto Tensor<float>::Rows() const -> uint32_t {
 	SCNNI_ASSERT(this->data_.size(), "data_ is empty"); 
-  return this->data_.dimensions()[0];
+    return this->data_.dimensions()[0];
 }
 
 //!
 auto Tensor<float>::Cols() const -> uint32_t {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty"); 
-  return this->data_.dimensions()[1];
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty"); 
+    return this->data_.dimensions()[1];
 }
 
 //!
 auto Tensor<float>::Channels() const -> uint32_t {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-  return this->data_.dimensions()[2];
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+    return this->data_.dimensions()[2];
 }
 
 //!
 auto Tensor<float>::Size() const -> uint32_t {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-  return this->data_.size();
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+    return this->data_.size();
 }
 
 //!
 void Tensor<float>::SetData(const Eigen::Tensor<float, 3>& data) {
-  SCNNI_ASSERT(data.dimensions()[0] == this->data_.dimensions()[0], "Data shape not meet");
-  SCNNI_ASSERT(data.dimensions()[1] == this->data_.dimensions()[1], "Data shape not meet");
-  SCNNI_ASSERT(data.dimensions()[2] == this->data_.dimensions()[2], "Data shape not meet");
-  this->data_ = data;
+    SCNNI_ASSERT(data.dimensions()[0] == this->data_.dimensions()[0], "Data shape not meet");
+    SCNNI_ASSERT(data.dimensions()[1] == this->data_.dimensions()[1], "Data shape not meet");
+    SCNNI_ASSERT(data.dimensions()[2] == this->data_.dimensions()[2], "Data shape not meet");
+    this->data_ = data;
 }
 
 //!
@@ -124,26 +126,26 @@ auto Tensor<float>::Empty() const -> bool {
 
 //!
 auto Tensor<float>::Index(uint32_t offset) const -> float {
-  // CHECK(offset < this->data_.size()) << "Tensor capacity is not enough!";
-  return this->data_(offset);
+    // CHECK(offset < this->data_.size()) << "Tensor capacity is not enough!";
+    return this->data_(offset);
 }
 
 //!
 auto Tensor<float>::Index(uint32_t offset) -> float & {
-  SCNNI_ASSERT(offset < this->data_.size(), "Tensor capacity is not enough!");
-  return this->data_(offset);
+    SCNNI_ASSERT(offset < this->data_.size(), "Tensor capacity is not enough!");
+    return this->data_(offset);
 }
 
 //!
 auto Tensor<float>::Shapes() const -> std::vector<uint32_t> {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-  return {this->Channels(), this->Rows(), this->Cols()};
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+    return {this->Channels(), this->Rows(), this->Cols()};
 }
 
 //!
 auto Tensor<float>::RawShapes() const -> const std::vector<uint32_t>& {
-  SCNNI_ASSERT(!this->raw_shapes_.empty(),  "raw_shapes_ is empty");
-  return this->raw_shapes_;
+    SCNNI_ASSERT(!this->raw_shapes_.empty(),  "raw_shapes_ is empty");
+    return this->raw_shapes_;
 }
 
 //!
@@ -325,80 +327,75 @@ void Tensor<float>::ReView(const std::vector<uint32_t>& shapes) {
 }
 
 void Tensor<float>::ReShape(const std::vector<uint32_t> &shapes) {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-  SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
-  
-	const uint32_t origin_size = this->Size();  // 原始大小
-  uint32_t current_size = 1;  //reshape后大小
-  for (uint32_t s : shapes) {
-    current_size *= s;
-  }
-  SCNNI_ASSERT(shapes.size() <= 3, "shapes.size() > 3");
-  SCNNI_ASSERT(current_size == origin_size, "Find current_size != origin_size");
-  Eigen::array<Eigen::DenseIndex, 3> dim;
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+    SCNNI_ASSERT(!shapes.empty(), "shapes is empty");
 
-  if (shapes.size() == 3) {
-		this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
-		 dim = {{shapes.at(1), shapes.at(2), shapes.at(0)}};
-		// Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(1), shapes.at(2), shapes.at(0)});
-		// this->data_ = this->data_.reshape(dim);
-		// this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
-    // this->data_ = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // Eigen::Tensor<float, 3> new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // this->data_ = new_data;
-  } else if (shapes.size() == 2) {  //为保证data_为三维且列优先, 在0维度设1
-    this->raw_shapes_ = {shapes.at(0), shapes.at(1)};
-		dim = {{shapes.at(0), shapes.at(1), 1}};
-		// Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(0), shapes.at(1), 1});
-		// this->data_ = this->data_.reshape(dim);
-		// this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
-    // this->data_ = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // Eigen::Tensor<float, 3> new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // this->data_ = new_data;
-  } else {  //为保证data_为三维且列优先, 在0维度和1维度设1
-    this->raw_shapes_ = {shapes.at(0)};
-		dim = {{shapes.at(0), 1, 1}};
-		// Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(0), 1, 1});
-		// this->data_ = this->data_.reshape(dim);
-		// this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
-    // this->data_ = this->data_.shuffle(Eigen::array<int, 3>{2, 0, 1}).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).shuffle(Eigen::array<int, 3>{1, 2, 0});
-    // Eigen::Tensor<float, 3> new_data = (this->data_).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
-    // this->data_ = new_data;
-  }
+	const uint32_t origin_size = this->Size();  // 原始大小
+    uint32_t current_size = 1;  //reshape后大小
+    for (uint32_t s : shapes) {
+        current_size *= s;
+    }
+    SCNNI_ASSERT(shapes.size() <= 3, "shapes.size() > 3");
+    SCNNI_ASSERT(current_size == origin_size, "Find current_size != origin_size");
+    Eigen::array<Eigen::DenseIndex, 3> dim;
+
+    if (shapes.size() == 3) {
+        this->raw_shapes_ = {shapes.at(0), shapes.at(1), shapes.at(2)};
+        dim = {{shapes.at(1), shapes.at(2), shapes.at(0)}};
+        // Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(1), shapes.at(2), shapes.at(0)});
+        // this->data_ = this->data_.reshape(dim);
+        // this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
+        // this->data_ = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // Eigen::Tensor<float, 3> new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // this->data_ = new_data;
+    } else if (shapes.size() == 2) {  //为保证data_为三维且列优先, 在0维度设1
+        this->raw_shapes_ = {shapes.at(0), shapes.at(1)};
+        dim = {{shapes.at(0), shapes.at(1), 1}};
+        // Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(0), shapes.at(1), 1});
+        // this->data_ = this->data_.reshape(dim);
+        // this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
+        // this->data_ = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // Eigen::Tensor<float, 3> new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // this->data_ = new_data;
+    } else {  //为保证data_为三维且列优先, 在0维度和1维度设1
+        this->raw_shapes_ = {shapes.at(0)};
+        dim = {{shapes.at(0), 1, 1}};
+        // Eigen::array<Eigen::DenseIndex, 3> dim({shapes.at(0), 1, 1});
+        // this->data_ = this->data_.reshape(dim);
+        // this->data_ = this->data_.reshape(dim).shuffle(Eigen::array<int, 3>{1, 0, 2});
+        // this->data_ = this->data_.shuffle(Eigen::array<int, 3>{2, 0, 1}).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).shuffle(Eigen::array<int, 3>{1, 2, 0});
+        // Eigen::Tensor<float, 3> new_data = (this->data_).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // auto new_data = this->data_.swap_layout().shuffle(Eigen::array<int, 3>{1, 2, 0}).reshape(dim).swap_layout().shuffle(Eigen::array<int, 3>{2, 1, 0});
+        // this->data_ = new_data;
+    }
   auto *row_major_data = new float[this->data_.size()];
-  for (int c = 0; c < this->data_.dimension(2); c++) {
-    for (int h = 0; h < this->data_.dimension(0); h++) {
-      for (int w = 0; w < this->data_.dimension(1); w++) {
-        row_major_data[w + h * this->data_.dimension(1) + c * this->data_.dimension(0) * this->data_.dimension(1)] = this->data_(h, w, c);
-      }
+    for (int c = 0; c < this->data_.dimension(2); c++) {
+        for (int h = 0; h < this->data_.dimension(0); h++) {
+            for (int w = 0; w < this->data_.dimension(1); w++) {
+                row_major_data[w + h * this->data_.dimension(1) + c * this->data_.dimension(0) * this->data_.dimension(1)] = this->data_(h, w, c);
+            }
+        }
     }
-  }
-  this->data_ = Eigen::Tensor<float, 3>(dim[0], dim[1], dim[2]);
-  for (int c = 0; c < this->data_.dimension(2); c++) {
-    for (int h = 0; h < this->data_.dimension(0); h++) {
-      for (int w = 0; w < this->data_.dimension(1); w++) {
-        this->data_(h, w, c) = row_major_data[w + h * this->data_.dimension(1) + c * this->data_.dimension(0) * this->data_.dimension(1)];
-      }
+    this->data_ = Eigen::Tensor<float, 3>(dim[0], dim[1], dim[2]);
+    for (int c = 0; c < this->data_.dimension(2); c++) {
+        for (int h = 0; h < this->data_.dimension(0); h++) {
+            for (int w = 0; w < this->data_.dimension(1); w++) {
+                this->data_(h, w, c) = row_major_data[w + h * this->data_.dimension(1) + c * this->data_.dimension(0) * this->data_.dimension(1)];
+            }
+        }
     }
-  }
 }
 //!
 void Tensor<float>::Flatten() {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-  const uint32_t size = this->data_.size();
-  this->ReRawshape({size});
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+    const uint32_t size = this->data_.size();
+    this->ReRawshape({size});
 }
 
-// void Tensor<float>::Transform(const std::function<float(float)>& filter) {
-//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-//   this->data_.transform(filter);
-// }
-
 auto Tensor<float>::Clone() -> std::shared_ptr<Tensor<float>> {
-  return std::make_shared<Tensor<float>>(*this);
+    return std::make_shared<Tensor<float>>(*this);
 }
 namespace img_util_func {
 auto ReadJpg(const std::string& fileName, std::vector<unsigned char>& image, unsigned int& width, unsigned int& height, unsigned int& channels) -> bool {
@@ -444,6 +441,7 @@ auto WriteFloat(const std::string& fileName, const float* data, unsigned int siz
 }
 }  // namespace img_util_func
 
+//!
 auto Tensor<float>::FromImage(const std::string &path, bool scaling) -> int {
     std::vector<unsigned char> image;
     unsigned int width;
@@ -485,37 +483,6 @@ auto Tensor<float>::FromImage(const std::string &path, bool scaling) -> int {
     return 0;
 }
 
-// void Tensor<float>::Review(const std::vector<uint32_t>& shapes) {
-//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-//   const uint32_t target_channels = shapes.at(0);
-//   const uint32_t target_rows = shapes.at(1);
-//   const uint32_t target_cols = shapes.at(2);
-//   CHECK_EQ(this->data_.size(), target_channels * target_cols * target_rows);
-//   Eigen::Tensor<float, 3> new_data(target_channels, target_rows, target_cols);
-
-//   const uint32_t plane_size = target_rows * target_cols;
-//   for (uint32_t c = 0; c < this->data_.dimensions()[0]; c++) {
-//     const Eigen::MatrixXf& channel = this->data_.Slice(c);
-//     for (uint32_t col_ = 0; col_ < this->data_.dimensions()[2]; ++col_) {
-//       const float* col_ptr = channel.colptr(col_);
-//       for (uint32_t r = 0; r < this->data_.dimensions()[1]; r++) {
-//         const uint32_t pos_index = c * data_.dimensions()[1] * data_.dimensions()[2] + r * data_.dimensions()[2] + col_;
-//         const uint32_t ch = pos_index / plane_size;
-//         const uint32_t row = (pos_index - ch * plane_size) / target_cols;
-//         const uint32_t col = (pos_index - ch * plane_size - row * target_cols);
-//         SCNNI_ASSERT(ch < new_data.dimensions()[0] && col < new_data.dimensions()[2] && row < new_data.dimensions()[1]);
-//         new_data.At(row, col, ch) = *(col_ptr + r);
-//       }
-//     }
-//   }
-//   this->data_ = std::move(new_data);
-// }
-
-// const float* Tensor<float>::raw_ptr() const {
-//   SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-//   return this->data_.memptr();
-// }
-
 auto TensorCreate(uint32_t channels, uint32_t rows, uint32_t cols) -> std::shared_ptr<Tensor<float>> {
   return std::make_shared<Tensor<float>>(channels, rows, cols);
 }
@@ -551,6 +518,7 @@ auto TensorIsSame(const std::shared_ptr<Tensor<float>>& a,
 	}
   return is_same;
 }
+
 
 //!
 void TensorElementAdd(const std::shared_ptr<Tensor<float>>& tensor1,
@@ -634,14 +602,15 @@ auto TensorElementMultiply(
 	return output_tensor;
 }
 
-//!
-auto TensorBroadcast(const std::shared_ptr<Tensor<float>>& s1,
-										const std::shared_ptr<Tensor<float>>& s2) -> std::tuple<std::shared_ptr<Tensor<float>>, std::shared_ptr<Tensor<float>>> {
+//！没用到
+auto TensorBroadcast(
+    const std::shared_ptr<Tensor<float>>& s1,
+	const std::shared_ptr<Tensor<float>>& s2) -> std::tuple<std::shared_ptr<Tensor<float>>, std::shared_ptr<Tensor<float>>> {
 	SCNNI_ASSERT(s1 != nullptr, "tensor1 is nullptr");
 	SCNNI_ASSERT(s2 != nullptr, "tensor2 is nullptr");
-  if(s1->Shapes() == s2->Shapes()){
-    return {s1, s2};
-  }
+    if(s1->Shapes() == s2->Shapes()){
+        return {s1, s2};
+    }
 	SCNNI_ASSERT(s1->Channels() == s2->Channels(), "");
 	if (s2->Rows() == 1 && s2->Cols() == 1) {  //s2为Flatten
 		std::shared_ptr<Tensor<float>> s2add = TensorCreate(s2->Channels(), s1->Rows(), s1->Cols());
@@ -662,38 +631,5 @@ auto TensorBroadcast(const std::shared_ptr<Tensor<float>>& s1,
 	// LOG(FATAL) << "Broadcast shape is not adapting!";
 	return {s1, s2};
 }
-
-// std::shared_ptr<Tensor<float>> TensorPadding(
-//     const std::shared_ptr<Tensor<float>>& tensor,
-//     const std::vector<uint32_t>& pads, float padding_value) {
-//   SCNNI_ASSERT(tensor != nullptr && !tensor->empty(), "");
-//   SCNNI_ASSERT(pads.size() == 4, "");
-//   uint32_t pad_rows1 = pads.at(0);  // up
-//   uint32_t pad_rows2 = pads.at(1);  // bottom
-//   uint32_t pad_cols1 = pads.at(2);  // left
-//   uint32_t pad_cols2 = pads.at(3);  // right
-
-//   std::shared_ptr<ftensor> output = std::make_shared<ftensor>(tensor->Channels(),
-// 																															tensor->Rows() + pad_rows1 + pad_rows2,
-// 																															tensor->Cols() + pad_cols1 + pad_cols2);
-//   if (padding_value != 0.f) output->Fill(padding_value);
-//   const uint32_t channels = tensor->Channels();
-//   for (uint32_t channel = 0; channel < channels; ++channel) {
-//     const Eigen::MatrixXf& in_channel = tensor->Slice(channel);
-//     Eigen::MatrixXf& output_channel = output->Slice(channel);
-//     const uint32_t in_channel_width = in_channel.dimensions()[2];
-//     const uint32_t in_channel_height = in_channel.dimensions()[1];
-
-//     for (uint32_t w = 0; w < in_channel_width; ++w) {
-//       float* output_channel_ptr = const_cast<float*>(output_channel.colptr(w + pad_cols1));
-//       const float* in_channel_ptr = in_channel.colptr(w);
-//       for (uint32_t h = 0; h < in_channel_height; ++h) {
-//         const float value = *(in_channel_ptr + h);
-//         *(output_channel_ptr + h + pad_rows1) = value;
-//       }
-//     }
-//   }
-//   return output;
-// }
 
 }  // namespace scnni

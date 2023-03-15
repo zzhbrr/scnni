@@ -26,6 +26,7 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
     if (padding_mode_ != "zeros") {
         LOG_ERROR("Conv2dLayer: only padding_mode=zeros supported yet");
     }
+    //遍历batch_size
     for (size_t batch = 0; batch < input_blobs[0].size(); batch++) {
         const auto input_tensor_shptr = input_blobs[0][batch];
         const std::shared_ptr<Tensor<float>> feat = output_blobs[0].at(0);
@@ -135,7 +136,6 @@ void Con2dLayer::SetPaddingmode(const std::string &padding_mode) {
 void Con2dLayer::SetStiride(const std::vector<int> &stride) {
     stride_ = stride;
 }
-
 void Con2dLayer::SetWeights(const Attribute &att) {
     SCNNI_ASSERT(att.shape_.size() == 4, "Conv2d: weight att shape != 4");
     // LOG_DEBUG("Conv2d weight shape: [%d %d %d %d]", att.shape_[0], att.shape_[1], att.shape_[2], att.shape_[3]);
@@ -163,11 +163,12 @@ void Con2dLayer::SetBiasValue(const Attribute &att) {
     this->bias_v_ = std::make_shared<Tensor<float>>(1, att.shape_[0], 1);
     // std::cout << "Conv2d bias:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
-      this->bias_v_->At(0, i, 0) = bias_value.at(i);
+        this->bias_v_->At(0, i, 0) = bias_value.at(i);
     //   std::cout << this->bias_v_->At(0, i, 0) << " ";
     }
     // std::cout << std::endl;
 }
+
 auto GetConv2dLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     auto* layer = new Con2dLayer();
     Parameter p = op->GetParam("bias");
@@ -192,12 +193,13 @@ auto GetConv2dLayer(const std::shared_ptr<Operator> &op) -> Layer* {
     Attribute att = op->GetAttr("weight");
     layer->SetWeights(att);
     if (use_bias) {
-      att = op->GetAttr("bias");
-      layer->SetBiasValue(att);
+        att = op->GetAttr("bias");
+        layer->SetBiasValue(att);
     }
     return layer;
-} 
+}
 
+// 注册算子: name="nn.Conv2d" and type = GetConv2dLayer
 LayerRegistelrWrapper conv2d_layer_registe("nn.Conv2d", LayerRegister::layer_creator_function(GetConv2dLayer));
 
 }  // namespace scnni

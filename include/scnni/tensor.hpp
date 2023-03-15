@@ -31,38 +31,26 @@ class Tensor<float> {
         * @param cols
         * @return {*}
         */
-        //@description: 声明构造函数(创建张量)
         explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols);
 
-        /**
-        * @description: 初始化shapes
-        */
+        // 初始化shapes
         explicit Tensor(const std::vector<uint32_t>& shapes);
 
-        /**
-        * @description: 构拷贝造函数
-        * @param tensor
-        * @return {*}
-        */
+        // 构拷贝造函数
         Tensor(const Tensor& tensor);
         
-        /**
-        * @description: 重载=，赋拷贝值函数
-        */    
+        // 重载=，赋拷贝值函数
         auto operator=(const Tensor& tensor) -> Tensor<float>&;
 
-        /**
-        * @description: 移动构造函数
-        * @param {Tensor&&} tensor
-        * @return {*}
-        */   
+        //移动构造函数   
         Tensor(Tensor&& tensor) noexcept;
         
-        /**
-        * @description: 重载=，移动赋值
-        */    
+        //重载=，移动赋值
         auto operator=(Tensor&& tenson) noexcept -> Tensor<float>&;
 
+        /**
+         * @description: 返回值
+         */        
         auto Channels() const -> uint32_t;  //返回张量的通道数（第一维度）
         auto Rows() const -> uint32_t;  //返回张量的行数（第二维度）
         auto Cols() const -> uint32_t;  //返回张量的列数（第三维度）
