@@ -1,7 +1,7 @@
 /*
  * @Author: zzh
  * @Date: 2023-03-04 
- * @LastEditTime: 2023-03-14 14:07:35
+ * @LastEditTime: 2023-03-15 03:08:28
  * @Description: 
  * @FilePath: /scnni/test/test_layer.cpp
  */
@@ -244,7 +244,6 @@ TEST(softmax_test, DISABLED_softmax_only_1batch_test) {
     cout << endl;
 
 }
-
 TEST(linear_test, DISABLED_infeat5_outfeat3_input1x5_1batch_test) {
   srand(time(nullptr));
   std::cout << "In graph_test load params" << std::endl;
@@ -335,4 +334,61 @@ TEST(combine_test, input3x4x4_output12x1_test) {
     EXPECT_NEAR(output_data(2, 0, 0), 0.00276862, 1e-6);
 
 
+TEST(conv2d_test, conv2d_test1) {
+  srand(time(nullptr));
+  std::cout << "In graph_test load params" << std::endl;
+  std::unique_ptr<scnni::Graph> g = std::make_unique<scnni::Graph>();
+  g->LoadModel("/ws/CourseProject/SCNNI/python_scripts/covn2d_net/conv2d_test1/conv2d_test1.pnnx.param",
+              "/ws/CourseProject/SCNNI/python_scripts/covn2d_net/conv2d_test1/conv2d_test1.pnnx.bin");
+  EXPECT_EQ(g->blobs_.size(), 2);
+  EXPECT_EQ(g->operators_.size(), 3);
+  scnni::Excecutor exe = scnni::Excecutor(std::move(g));
+
+  scnni::Tensor<float> input_tensor(2, 5, 5);
+  Eigen::Tensor<float, 3> input_data(5, 5, 2);
+  for (int i = 0; i < 2; i ++) {
+    for (int j = 0; j < 5; j ++) {
+      for (int k = 0; k < 5; k ++) {
+        input_data(j, k, i) = k + j * 5 + i * 25;
+      }
+    }
+  }
+
+  for (int c = 0; c < 2; c ++) {
+    for (int h = 0; h < 5; h ++) {
+      for (int w = 0; w < 5; w ++) {
+        cout << input_data(h, w, c) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
+  input_tensor.SetData(input_data);
+  std::vector<scnni::Tensor<float>> input_batch;
+  input_batch.push_back(input_tensor);
+
+  exe.Input("0", input_batch);
+  exe.Forward();
+  std::vector<scnni::Tensor<float>> output_batch = exe.Output(); 
+
+  Eigen::Tensor<float, 3> output_data(3, 3, 4);
+  output_data = output_batch[0].GetData();
+
+  for (int c = 0; c < 4; c ++) {
+    for (int h = 0; h < 3; h ++) {
+      for (int w = 0; w < 3; w ++) {
+        cout << output_data(h, w, c) << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
+  EXPECT_NEAR(output_data(0, 0, 0), -6.6528, 1e-4);
+  EXPECT_NEAR(output_data(2, 1, 0), -14.9152, 1e-4);
+  EXPECT_NEAR(output_data(1, 1, 1), 3.8489, 1e-4);
+  EXPECT_NEAR(output_data(0, 2, 2), 10.7468, 1e-4);
+  EXPECT_NEAR(output_data(1, 0, 2), 20.7828, 1e-4);
+  EXPECT_NEAR(output_data(2, 2, 3), 19.9446, 1e-4);
+
+  
 }

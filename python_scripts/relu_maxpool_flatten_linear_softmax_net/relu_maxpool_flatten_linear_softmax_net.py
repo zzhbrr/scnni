@@ -1,3 +1,10 @@
+'''
+Author: zzh
+Date: 2023-03-14
+LastEditTime: 2023-03-15 03:09:15
+Description: 
+FilePath: /scnni/python_scripts/relu_maxpool_flatten_linear_softmax_net/relu_maxpool_flatten_linear_softmax_net.py
+'''
 import torch
 import torch.nn as nn
 
@@ -6,20 +13,20 @@ class TestNet(nn.Module):
         super(TestNet, self).__init__()
 
         self.relu = nn.ReLU()
-        self.linear = nn.Linear(in_features = 5, out_features = 3, bias=True)
+        self.linear = nn.Linear(in_features = 12, out_features = 3, bias=True)
     def forward(self, x):
-        x = self.relu(x)
-        x = nn.MaxPool2d(2, 2)(x)
-        x = torch.flatten(x, 1)
-        x = self.linear(x)
-        x = nn.Softmax(dim=1)(x)
-        return x
+        y = self.relu(x)
+        y = nn.MaxPool2d(2, 2)(y)
+        y = torch.flatten(y, 1)
+        y = self.linear(y)
+        y = nn.Softmax(dim=1)(y)
+        return y
 
 
 if __name__ == '__main__':
     net = TestNet()
-    # state_dict = torch.load('relu_maxpool_flatten_linear_softmax_net.pkl')
-    # net.load_state_dict(state_dict)
+    state_dict = torch.load('relu_maxpool_flatten_linear_softmax_net.pkl')
+    net.load_state_dict(state_dict)
     net.eval()
 
     # x = torch.tensor([1, 2, 3, -1, -2, 4, 5, 6, -7, -8, 12, 11])
