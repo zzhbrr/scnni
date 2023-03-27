@@ -202,42 +202,32 @@ auto Tensor<float>::At(uint32_t channel, uint32_t row, uint32_t col) -> float& {
   return this->data_(row, col, channel);
 }
 
+//!
 void Tensor<float>::Padding(const std::vector<uint32_t>& pads, float padding_value) {
-  SCNNI_ASSERT(this->data_.size(), "data_ is empty");
-  SCNNI_ASSERT(pads.size() == 4, "Padding: pads size != 4");
-  uint32_t pad_rows1 = pads.at(0);  // up
-  uint32_t pad_rows2 = pads.at(1);  // bottom
-  uint32_t pad_cols1 = pads.at(2);  // left
-  uint32_t pad_cols2 = pads.at(3);  // right
-
-  Eigen::Tensor<float, 3> new_data(this->data_.dimensions()[0] + pad_rows1 + pad_rows2,
-                      this->data_.dimensions()[1] + pad_cols1 + pad_cols2,
-                      this->data_.dimensions()[2]);
-  raw_shapes_[0] = new_data.dimensions()[2];
-  raw_shapes_[1] = new_data.dimensions()[0];
-  raw_shapes_[2] = new_data.dimensions()[1];
-
-  new_data.setConstant(padding_value);
-
-  for (int c = 0; c < this->data_.dimensions()[2]; c ++) {
-    for (int i = pad_rows1; i < pad_rows1 + this->data_.dimensions()[0]; i++) {
-      for (int j = pad_cols1; j < pad_cols1 + this->data_.dimensions()[1]; j ++) {
-        new_data(i, j, c) = this->data_(i-pad_rows1, j-pad_cols1, c);
-      }
+    SCNNI_ASSERT(this->data_.size(), "data_ is empty");
+    SCNNI_ASSERT(pads.size() == 4, "Padding: pads size != 4");
+    uint32_t pad_rows1 = pads.at(0);  // up
+    uint32_t pad_rows2 = pads.at(1);  // bottom
+    uint32_t pad_cols1 = pads.at(2);  // left
+    uint32_t pad_cols2 = pads.at(3);  // right
+    // 设定shape
+    Eigen::Tensor<float, 3> new_data(this->data_.dimensions()[0] + pad_rows1 + pad_rows2,
+                                    this->data_.dimensions()[1] + pad_cols1 + pad_cols2,
+                                    this->data_.dimensions()[2]);
+    raw_shapes_[0] = new_data.dimensions()[2];
+    raw_shapes_[1] = new_data.dimensions()[0];
+    raw_shapes_[2] = new_data.dimensions()[1];
+    // 全部填充padding_value
+    new_data.setConstant(padding_value);
+    // 内部再还原原来的data_
+    for (int c = 0; c < this->data_.dimensions()[2]; c ++) {
+        for (int i = pad_rows1; i < pad_rows1 + this->data_.dimensions()[0]; i++) {
+            for (int j = pad_cols1; j < pad_cols1 + this->data_.dimensions()[1]; j ++) {
+                new_data(i, j, c) = this->data_(i-pad_rows1, j-pad_cols1, c);
+            }
+        }
     }
-  }
-
-  // this->data_ = this->data_ + this->data_.setConstant(-padding_value);
-
-  // Eigen::array<std::pair<int, int>, 3> paddings;
-  // paddings[0] = std::make_pair(pad_cols1, pad_cols2);
-  // paddings[1] = std::make_pair(pad_rows1, pad_rows2);
-  // paddings[2] = std::make_pair(0, 0);
-  // Eigen::Tensor<float, 3> data_padding0 = this->data_.pad(paddings);
-  
-  // new_data = data_padding0.constant(padding_value) + data_padding0;
-
-  this->data_ = new_data;
+    this->data_ = new_data;
 }
 
 //!
