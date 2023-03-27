@@ -33,23 +33,24 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
         auto in_shape = input_tensor_shptr->Shapes();
 
         Tensor<float> after_padding = *input_tensor_shptr;
-        after_padding.Padding({static_cast<unsigned int>(padding_[0]),
-                               static_cast<unsigned int>(padding_[0]),
-                               static_cast<unsigned int>(padding_[1]),
-                               static_cast<unsigned int>(padding_[1])},
-                               0);
+        after_padding.Padding(
+            {
+                static_cast<unsigned int>(padding_[0]),
+                static_cast<unsigned int>(padding_[0]),
+                static_cast<unsigned int>(padding_[1]),
+                static_cast<unsigned int>(padding_[1])
+            }, 0);
         SCNNI_ASSERT((int)feat->Shapes()[0] == out_channels_, "Conv2d: output channels not match output blob's shape");
-        int out_h = (input_tensor_shptr->Rows() + 2 * padding_[0] -
-                         dilation_[0] * (kernel_size_[0] - 1) - 1) / stride_[0] + 1;
-        int out_w = (input_tensor_shptr->Cols() + 2 * padding_[1] -
-                         dilation_[1] * (kernel_size_[1] - 1) - 1) / stride_[1] + 1;
+        // Refering to: https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html?highlight=conv2d#torch.nn.Conv2d
+        int out_h = (input_tensor_shptr->Rows() + 2 * padding_[0] - dilation_[0] * (kernel_size_[0] - 1) - 1) / stride_[0] + 1;
+        int out_w = (input_tensor_shptr->Cols() + 2 * padding_[1] - dilation_[1] * (kernel_size_[1] - 1) - 1) / stride_[1] + 1;
         // LOG_DEBUG("Conv2dLayer: out_h:%d, out_w:%d", out_h, out_w);
         SCNNI_ASSERT(out_h == (int)feat->Rows(), "Conv2dLayer: shape not right");
         SCNNI_ASSERT(out_w == (int)feat->Cols(), "Conv2dLayer: shape not right");
         Eigen::MatrixXf kernel_mat(out_channels_, kernel_size_[0]*kernel_size_[1]*in_channels_);
         Eigen::MatrixXf img_mat(kernel_size_[0]*kernel_size_[1]*in_channels_, out_h * out_w);
         Eigen::MatrixXf mulres;
-
+        // 确定kernel_mat数值
         for (int outc = 0; outc < out_channels_; outc ++) {
             int cnt = 0;
             for (int c = 0; c < in_channels_; c ++) {
@@ -61,6 +62,7 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
                 }
             }
         }
+        // 将 after_padding 化为二维矩阵 img_mat
         int colcnt = 0;
         int step_h = 0;
         for (uint32_t h = 0; h < after_padding.Rows(); h += stride_[0]) {
@@ -86,15 +88,9 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
                 colcnt++;
             }
         }
-        // after_padding.Show();
-        // for (int i = 0; i < kernel_size_[0]*kernel_size_[1]*in_channels_; i ++) {
-        //     for (int j = 0; j < out_h*out_w; j ++) {
-        //         std::cout << img_mat(i, j) << " ";
-        //     }
-        //     std::cout << std::endl;
-        // }
-        // std::cout << "ready to matmul" << std::endl;
-        mulres = kernel_mat * img_mat; // out_channels x (out_w * out_h)
+        // 计算得到结果
+        mulres = kernel_mat * img_mat; // [out_channels, out_w*out_h]
+        // 将 mulres 化为三维向量 feat
         for (int c = 0; c < out_channels_; c ++) {
             for (int i = 0; i < out_h; i ++) {
                 for (int j = 0; j < out_w; j ++) {
@@ -109,6 +105,7 @@ auto Con2dLayer::Forward(const std::vector<std::vector<std::shared_ptr<Tensor<fl
     
     return 0;
 }
+
 void Con2dLayer::SetBias(bool bias) {
     bias_ = bias;
 }
@@ -141,32 +138,24 @@ void Con2dLayer::SetWeights(const Attribute &att) {
     // LOG_DEBUG("Conv2d weight shape: [%d %d %d %d]", att.shape_[0], att.shape_[1], att.shape_[2], att.shape_[3]);
     std::vector<float> weights = att.Get();
     this->weights_.resize(att.shape_[0]);
-    // std::cout << "Linear weight:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
         this->weights_.at(i) = std::make_shared<Tensor<float>>(att.shape_[1], att.shape_[2], att.shape_[3]);
-        // std::cout << i << "'th" << std::endl;
         for (int c = 0; c < att.shape_[1]; c ++) {
             for (int h = 0; h < att.shape_[2]; h ++) {
                 for (int w = 0; w < att.shape_[3]; w ++) {
                     this->weights_.at(i)->At(c, h, w) = weights.at(w + h * att.shape_[3] + c * att.shape_[2] * att.shape_[3] + i * att.shape_[1]*att.shape_[2]*att.shape_[3]);
-                    // std::cout << this->weights_.at(i)->At(c, h, w) << " ";
                 }
-                // std::cout << std::endl;
             }
         }
-        // std::cout << std::endl;
     }
 }
 void Con2dLayer::SetBiasValue(const Attribute &att) {
     SCNNI_ASSERT(att.shape_.size() == 1, "Conv2d: bias att shape != 1");
     std::vector<float> bias_value = att.Get();
     this->bias_v_ = std::make_shared<Tensor<float>>(1, att.shape_[0], 1);
-    // std::cout << "Conv2d bias:" << std::endl;
     for (int i = 0; i < att.shape_[0]; i ++) {
         this->bias_v_->At(0, i, 0) = bias_value.at(i);
-    //   std::cout << this->bias_v_->At(0, i, 0) << " ";
     }
-    // std::cout << std::endl;
 }
 
 auto GetConv2dLayer(const std::shared_ptr<Operator> &op) -> Layer* {
